@@ -26,3 +26,24 @@
 const $k = function (selector) {
   return document.querySelector(selector)
 }
+
+const createMessageBox = function (msg) {
+  const messageBox = document.createElement('div')
+  messageBox.className = "message-box"
+  messageBox.innerHTML = msg
+  return messageBox
+}
+const $message = {
+  show (msg) {
+      const messageBox = createMessageBox(msg)
+      const body = document.querySelector('body')
+      body.append(messageBox)
+      messageBox.classList.add('fade-in')
+      setTimeout(function () {
+        messageBox.classList.add('fade-out')
+      }, 2500)
+      setTimeout(function () {
+        messageBox.parentNode.removeChild(messageBox)
+      }, 3000)
+  }
+}

@@ -164,3 +164,61 @@ html, body, .wrapper {
   width: 100%;
   margin-bottom: 30px;
 }
+
+.message-box {
+  transform: translate(-50%, -50%);
+  min-width: 380px;
+  box-sizing: border-box;
+  border-radius: 4px;
+  border-width: 1px;
+  border-style: solid;
+  border-color: #e6ebf5;
+  position: fixed;
+  left: 50%;
+  top: 20px;
+  -webkit-transform: translateX(-50%);
+  transform: translateX(-50%);
+  background-color: #edf2fc;
+  -webkit-transition: opacity .3s,-webkit-transform .4s;
+  transition: opacity .3s,-webkit-transform .4s;
+  transition: opacity .3s,transform .4s;
+  transition: opacity .3s,transform .4s,-webkit-transform .4s;
+  overflow: hidden;
+  padding: 15px 15px 15px 20px;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  background-color: #e7faf0;
+  border-color: #d0f5e0;
+  color: #13ce66;
+  font-size: 14px;
+}
+
+.fade-in {
+  animation: fadeIn .5s linear forwards;
+}
+
+.fade-out {
+  animation: fadeOut .5s linear forwards;
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeOut {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}

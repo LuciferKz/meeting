@@ -36,7 +36,13 @@
         password: $k('.password').value
       })
       .then(function (res) {
-        console.log(res)
+        console.log(res, res.status, res.status === 1)
+        if (res.status === 1) {
+          $message.show(res.msg)
+          setTimeout(function () {
+            location.href = 'index.html'
+          }, 3000)
+        }
       })
     })
   </script>

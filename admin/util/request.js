@@ -1,5 +1,6 @@
 const baseUrl = 'http://localhost:3000';
 const myHeaders = new Headers()
+myHeaders.append('Accept', 'application/json; charset=utf-8')
 myHeaders.append('Content-Type', 'application/json; charset=utf-8')
 
 const request = {
@@ -28,6 +29,8 @@ const request = {
       mode: 'cors', // no-cors, cors, *same-origin
       redirect: 'follow', // manual, *follow, error
       referrer: 'no-referrer', // *client, no-referrer
+    }).then(function (res) {
+      return res.json()
     })
   }
 }
