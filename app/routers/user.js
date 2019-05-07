@@ -26,4 +26,16 @@ router.post('/register', function (req, res, next) {
     })
 })
 
+router.get('/list', (req, res, next) => {
+    userHandler
+    .getUsers(req.query)
+    .then((data) => {
+        res.send({
+            status: 1,
+            data,
+            msg: '获取成功'
+        })
+    })
+})
+
 module.exports = router

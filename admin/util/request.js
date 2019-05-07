@@ -10,25 +10,32 @@ const request = {
     }
   },
   get: function (url, data) {
-    let params = ''
+    let params = []
     for (let name in data) {
-      params += name + '=' + data[name]
+      params.push(name + '=' + data[name])
     }
-    return fetch(baseUrl + url + '?' + params, {
+    return fetch(baseUrl + url + '?' + params.join('&'), {
       method: 'GET',
-      headers: myHeaders
+      cache: 'no-cache',
+      credentials: 'same-origin',
+      headers: myHeaders,
+      mode: 'cors',
+      redirect: 'follow',
+      referrer: 'no-referrer',
+    }).then(function (res) {
+      return res.json()
     })
   },
   post: function (url, data) {
     return fetch(baseUrl + url, {
       body: JSON.stringify(data),
-      cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
-      credentials: 'same-origin', // include, same-origin, *omit
-      method: 'POST', // *GET, POST, PUT, DELETE, etc.
+      cache: 'no-cache',
+      credentials: 'same-origin',
+      method: 'POST',
       headers: myHeaders,
-      mode: 'cors', // no-cors, cors, *same-origin
-      redirect: 'follow', // manual, *follow, error
-      referrer: 'no-referrer', // *client, no-referrer
+      mode: 'cors',
+      redirect: 'follow',
+      referrer: 'no-referrer',
     }).then(function (res) {
       return res.json()
     })

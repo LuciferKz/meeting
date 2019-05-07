@@ -1,38 +1,40 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>会议管理后台</title>
-    <link rel="stylesheet" href="styles/com.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>会议管理后台</title>
+  <link rel="stylesheet" href="styles/com.css">
 </head>
 <body>
-    <div id="wrapper" class="wrapper">
-        <div id="sidebar" class="sidebar">
-            <nav>
-                <ul class="sidebar__menu">
-                    <li class="sidebar__menu__item sidebar__menu__item--active">
-                        <a href="#">首页</a>
-                    </li>
-                    <li class="sidebar__menu__item">
-                        <a href="#">用户管理</a>
-                    </li>
-                    <li class="sidebar__menu__item">
-                        <a href="#">品牌会议</a>
-                    </li>
-                </ul>
-            </nav>
-        </div>
-        <div id="container" class="container">
-            <div class="header">
-                <div class="navbar"></div>
-            </div>
-            <div class="view-container">
-                <div class="title"></div>
-                <div class="content"></div>
-            </div>
-        </div>
+  <div id="wrapper" class="wrapper">
+    <div id="sidebar" class="sidebar">
+      <nav>
+        <ul class="sidebar__menu"></ul>
+      </nav>
     </div>
+    <div id="container" class="container">
+      <div class="header">
+        <div class="header__crumb">
+          首页
+        </div>
+        <div class="navbar"></div>
+        <div class="avatar-wrapper">
+          <img src="styles/avatar.gif" alt="" class="user-avatar">
+          <i class="arrow-down"></i>
+        </div>
+      </div>
+      <div class="view-container">
+        <div class="title"></div>
+        <div class="content"></div>
+      </div>
+      <ul class="user-menu">
+        <li class="user-menu__item">退出登录</li>
+      </ul>
+    </div>
+    <div class="cover"></div>
+  </div>
+  <script src="util/index.js"></script>
 </body>
 </html>

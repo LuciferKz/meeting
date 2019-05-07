@@ -14,6 +14,17 @@ const getUserByName = function (name) {
     })
 }
 
+const getUsers = function (params) {
+    let offset = parseInt(params.offset)
+    let limit = parseInt(params.limit)
+    return new Promise((resolve, reject) => {
+        db.query('SELECT `user`.id, `user`.username, `brand`.name as brandName, `user`.createAt, `user`.updateAt FROM user LEFT JOIN brand ON user.brand = brand.id LIMIT ?,?', [offset, limit], function (err, data) {
+            if (err) reject(err)
+            resolve(data)
+        })
+    })
+}
+
 const login = function (params, cb) {
     let username = params.username
     let password = params.password
@@ -54,6 +65,7 @@ const register = function (params, cb) {
 
 module.exports = {
     getUserByName,
+    getUsers,
     login,
-    register
+    register,
 }
