@@ -34,12 +34,12 @@ const login = function (params, cb) {
     return getUserByName(username)
     .then((data) => {
         let message = ''
-        let status = 2
+        let code = 2
         let token = null
 
         if (data) {
             if (data[0].password === newPwd) {
-                status = 20000
+                code = 20000
                 message = '登录成功'
                 token = token = jwt.encode({ username, expires: Date.now() + 2 * 60 * 60 * 1000 }, secret);
             } else {
@@ -49,7 +49,7 @@ const login = function (params, cb) {
             message = '账号不存在'
         }
 
-        return { status, message, data: { token } }
+        return { code, message, data: { token } }
     })
     .catch((err) => {
         throw err

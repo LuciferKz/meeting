@@ -15,11 +15,11 @@ router.post('/register', function (req, res, next) {
     .register(req.body, (err, data) => {
         if (err) {
             console.log(err)
-            res.send({ status: 2, message: "注册失败" })
+            res.send({ code: 2, message: "注册失败" })
         }
         if (data){
             res.send({
-                status: 20000,
+                code: 20000,
                 data: {
                     user: {
                         id: data.insertId.id
@@ -36,7 +36,7 @@ router.get('/list', (req, res, next) => {
     .getUsers(req.query)
     .then((data) => {
         res.send({
-            status: 20000,
+            code: 20000,
             data,
             message: '获取成功'
         })
