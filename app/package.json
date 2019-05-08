@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "node ./bin/www.js"
+    "dev": "node ./bin/www.js --env dev",
+    "pro": "pm2 ./bin/www.js --env pro"
   },
   "author": "",
   "license": "ISC",
