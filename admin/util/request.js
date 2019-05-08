@@ -1,4 +1,4 @@
-const baseUrl = 'http://localhost:3030';
+const baseUrl = 'http://120.55.55.34:3031';
 const myHeaders = new Headers()
 myHeaders.append('Accept', 'application/json; charset=utf-8')
 myHeaders.append('Content-Type', 'application/json; charset=utf-8')
