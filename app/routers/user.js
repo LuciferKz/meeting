@@ -13,7 +13,10 @@ router.post('/login', (req, res, next) => {
 router.post('/register', function (req, res, next) {
     userHandler
     .register(req.body, (err, data) => {
-        if (err) res.send({ status: 2, msg: "注册失败" })
+        if (err) {
+            console.log(err)
+            res.send({ status: 2, msg: "注册失败" })
+        }
         if (data){
             res.send({
                 status: 1,
