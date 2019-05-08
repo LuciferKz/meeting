@@ -2,6 +2,7 @@ const jwt = require('jwt-simple')
 const crypto = require("crypto")
 const sql = require('./sql.js')
 const db = require('../db/index.js')
+const moment = require('moment')
 
 const secret = 'pingpaihuiyijilu'
 
@@ -60,7 +61,7 @@ const register = function (params, cb) {
     let password = params.password
     let md5 = crypto.createHash("md5")
     let newPwd = md5.update(password).digest("hex");
-    db.query(sql.SQL_USER_INSERT, [username, newPwd, params.brandId], cb)
+    db.query(sql.SQL_USER_INSERT, [username, newPwd, params.brandId, moment().format('YYYY-MM-DD HH:MM:SS'), moment().format('YYYY-MM-DD HH:MM:SS')], cb)
 }
 
 module.exports = {
