@@ -39,7 +39,7 @@ const login = function (params, cb) {
 
         if (data) {
             if (data[0].password === newPwd) {
-                status = 1
+                status = 20000
                 message = '登录成功'
                 token = token = jwt.encode({ username, expires: Date.now() + 2 * 60 * 60 * 1000 }, secret);
             } else {

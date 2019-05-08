@@ -19,7 +19,7 @@ router.post('/register', function (req, res, next) {
         }
         if (data){
             res.send({
-                status: 1,
+                status: 20000,
                 data: {
                     user: {
                         id: data.insertId.id
@@ -36,7 +36,7 @@ router.get('/list', (req, res, next) => {
     .getUsers(req.query)
     .then((data) => {
         res.send({
-            status: 1,
+            status: 20000,
             data,
             message: '获取成功'
         })
