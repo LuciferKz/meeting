@@ -20,8 +20,10 @@ router.post('/register', function (req, res, next) {
         if (data){
             res.send({
                 status: 1,
-                user: {
-                    id: data.insertId.id
+                data: {
+                    user: {
+                        id: data.insertId.id
+                    },
                 },
                 msg: "注册成功"
             })

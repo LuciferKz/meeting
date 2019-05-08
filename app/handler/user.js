@@ -49,7 +49,7 @@ const login = function (params, cb) {
             msg = '账号不存在'
         }
 
-        return { status, msg, token }
+        return { status, msg, data: { token } }
     })
     .catch((err) => {
         throw err
