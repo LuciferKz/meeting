@@ -14,6 +14,15 @@ import Layout from '@/layout'
 
 export const constantRoutes = [
   {
+    path: '/',
+    component: Layout,
+    hidden: true,
+    children: [
+      {
+      }
+    ]
+  },
+  {
     path: '/redirect',
     component: Layout,
     hidden: true,
