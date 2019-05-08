@@ -15,7 +15,7 @@ router.post('/register', function (req, res, next) {
     .register(req.body, (err, data) => {
         if (err) {
             console.log(err)
-            res.send({ status: 2, msg: "注册失败" })
+            res.send({ status: 2, message: "注册失败" })
         }
         if (data){
             res.send({
@@ -25,7 +25,7 @@ router.post('/register', function (req, res, next) {
                         id: data.insertId.id
                     },
                 },
-                msg: "注册成功"
+                message: "注册成功"
             })
         }
     })
@@ -38,7 +38,7 @@ router.get('/list', (req, res, next) => {
         res.send({
             status: 1,
             data,
-            msg: '获取成功'
+            message: '获取成功'
         })
     })
 })

@@ -33,23 +33,23 @@ const login = function (params, cb) {
     let newPwd = md5.update(password).digest("hex")
     return getUserByName(username)
     .then((data) => {
-        let msg = ''
+        let message = ''
         let status = 2
         let token = null
 
         if (data) {
             if (data[0].password === newPwd) {
                 status = 1
-                msg = '登录成功'
+                message = '登录成功'
                 token = token = jwt.encode({ username, expires: Date.now() + 2 * 60 * 60 * 1000 }, secret);
             } else {
-                msg = '密码错误'
+                message = '密码错误'
             }
         } else {
-            msg = '账号不存在'
+            message = '账号不存在'
         }
 
-        return { status, msg, data: { token } }
+        return { status, message, data: { token } }
     })
     .catch((err) => {
         throw err
