@@ -102,7 +102,7 @@ export default {
       for (const router of routes) {
         // skip hidden router
         if (router.hidden) { continue }
-
+        console.log(basePath, router.path)
         const data = {
           path: path.resolve(basePath, router.path),
           title: [...prefixTitle]

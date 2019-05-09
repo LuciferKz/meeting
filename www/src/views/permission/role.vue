@@ -110,7 +110,6 @@ export default {
     // Reshape the routes structure so that it looks the same as the sidebar
     generateRoutes(routes, basePath = '/') {
       const res = []
-
       for (let route of routes) {
         // skip some route
         if (route.hidden) { continue }
@@ -120,7 +119,9 @@ export default {
         if (route.children && onlyOneShowingChild && !route.alwaysShow) {
           route = onlyOneShowingChild
         }
+        console.log(route)
 
+        console.log(basePath, route.path)
         const data = {
           path: path.resolve(basePath, route.path),
           title: route.meta && route.meta.title
