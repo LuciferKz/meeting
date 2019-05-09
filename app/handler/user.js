@@ -6,6 +6,20 @@ const moment = require('moment')
 
 const secret = 'pingpaihuiyijilu'
 
+const info = function (token) {
+    let decoded = jwt.decode(token, secret)
+    return new Promise((resolve, reject) => {
+        db.query('SELECT `user`.username, `brand`.name as brandName, `user`.createAt, `user`.updateAt, `user`.avatar, `user`.roles, `user`.introduction FROM user LEFT JOIN brand ON user.brand = brand.id where `user`.username = ?', [decoded.username], function (err, data) {
+            if (err) reject(err)
+            resolve({
+                code: 20000,
+                data: data[0],
+                msg: '请求成功'
+            })
+        })
+    })
+}
+
 const getUserByName = function (name) {
     return new Promise((resolve, reject) => {
         db.query('select * from user where username = ?', [name], function (err, data) {
@@ -41,7 +55,7 @@ const login = function (params, cb) {
             if (data[0].password === newPwd) {
                 code = 20000
                 message = '登录成功'
-                token = token = jwt.encode({ username, expires: Date.now() + 2 * 60 * 60 * 1000 }, secret);
+                token = jwt.encode({ username, expires: Date.now() + 2 * 60 * 60 * 1000 }, secret);
             } else {
                 message = '密码错误'
             }
@@ -69,4 +83,5 @@ module.exports = {
     getUsers,
     login,
     register,
+    info
 }

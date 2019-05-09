@@ -43,4 +43,12 @@ router.get('/list', (req, res, next) => {
     })
 })
 
+router.get('/info', (req, res, next) => {
+    userHandler
+    .info(req.query.token)
+    .then((data) => {
+        res.send(data)
+    })
+})
+
 module.exports = router
