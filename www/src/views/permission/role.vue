@@ -119,9 +119,7 @@ export default {
         if (route.children && onlyOneShowingChild && !route.alwaysShow) {
           route = onlyOneShowingChild
         }
-        console.log(route)
 
-        console.log(basePath, route.path)
         const data = {
           path: path.resolve(basePath, route.path),
           title: route.meta && route.meta.title

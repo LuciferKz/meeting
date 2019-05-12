@@ -8,36 +8,27 @@ const secret = 'pingpaihuiyijilu'
 
 const info = function (token) {
     let decoded = jwt.decode(token, secret)
-    return new Promise((resolve, reject) => {
-        db.query('SELECT `user`.username, `brand`.name as brandName, `user`.createAt, `user`.updateAt, `user`.avatar, `user`.roles, `user`.introduction FROM user LEFT JOIN brand ON user.brand = brand.id where `user`.username = ?', [decoded.username], function (err, data) {
-            if (err) reject(err)
-            resolve({
-                code: 20000,
-                data: data[0],
-                msg: '请求成功'
-            })
+    return db
+    .query(sql.SQL_USER_INFO, [decoded.username])
+    .then((data) => {
+        return ({
+            code: 20000,
+            data: data ? data[0] : {},
+            message: '请求成功'
         })
     })
 }
 
 const getUserByName = function (name) {
-    return new Promise((resolve, reject) => {
-        db.query('select * from user where username = ?', [name], function (err, data) {
-            if (err) reject(err)
-            resolve(data)
-        })
-    })
+    return db
+    .query('select * from user where username = ?', [name])
 }
 
 const getUsers = function (params) {
     let offset = parseInt(params.offset)
     let limit = parseInt(params.limit)
-    return new Promise((resolve, reject) => {
-        db.query('SELECT `user`.id, `user`.username, `brand`.name as brandName, `user`.createAt, `user`.updateAt FROM user LEFT JOIN brand ON user.brand = brand.id LIMIT ?,?', [offset, limit], function (err, data) {
-            if (err) reject(err)
-            resolve(data)
-        })
-    })
+    return db
+    .query(sql.SQL_USER_LIST, [offset, limit])
 }
 
 const login = function (params, cb) {
@@ -55,6 +46,7 @@ const login = function (params, cb) {
             if (data[0].password === newPwd) {
                 code = 20000
                 message = '登录成功'
+                // 2 * 60 * 60 * 1000
                 token = jwt.encode({ username, expires: Date.now() + 2 * 60 * 60 * 1000 }, secret);
             } else {
                 message = '密码错误'
@@ -65,23 +57,52 @@ const login = function (params, cb) {
 
         return { code, message, data: { token } }
     })
-    .catch((err) => {
-        throw err
-    })
 }
 
-const register = function (params, cb) {
+const logout = function () {
+    return Promise.resolve(true)
+}
+
+const auth = function (token) {
+    let decoded = {}
+    let code = 20000
+    let message = ''
+    if (!token) {
+        code = 50008
+        message = '用户未登录！'
+    } else {
+        decoded = jwt.decode(token, secret)
+        if (decoded) {
+            if (Date.now() > decoded.expires) {
+                code = 50014
+                message = '登录超时！'
+            }
+        } else {
+            code = 50008
+            message = 'Token不合理！'
+        }
+    }
+    return Promise.resolve({
+        code,
+        message
+    }, decoded)
+}
+
+const register = function (params) {
     let username = params.username
     let password = params.password
     let md5 = crypto.createHash("md5")
     let newPwd = md5.update(password).digest("hex");
-    db.query(sql.SQL_USER_INSERT, [username, newPwd, params.brandId, moment().format('YYYY-MM-DD HH:MM:SS'), moment().format('YYYY-MM-DD HH:MM:SS')], cb)
+    return db
+    .query(sql.SQL_USER_INSERT, [username, newPwd, params.brandId, moment().format('YYYY-MM-DD HH:MM:SS'), moment().format('YYYY-MM-DD HH:MM:SS')])
 }
 
 module.exports = {
     getUserByName,
     getUsers,
     login,
+    logout,
     register,
-    info
+    info,
+    auth
 }

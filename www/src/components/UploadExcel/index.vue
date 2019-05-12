@@ -16,7 +16,8 @@ import XLSX from 'xlsx'
 export default {
   props: {
     beforeUpload: Function, // eslint-disable-line
-    onSuccess: Function// eslint-disable-line
+    onSuccess: Function, // eslint-disable-line
+    onSubmit: Function
   },
   data() {
     return {
@@ -70,12 +71,20 @@ export default {
       this.$refs['excel-upload-input'].value = null // fix can't select the same excel
 
       if (!this.beforeUpload) {
-        this.readerData(rawFile)
+        // this.readerData(rawFile)
+        this.loading = true
+        this.onSubmit(rawFile).then(() => {
+          this.loading = false
+        })
         return
       }
       const before = this.beforeUpload(rawFile)
       if (before) {
-        this.readerData(rawFile)
+        // this.readerData(rawFile)
+        this.loading = true
+        this.onSubmit(rawFile).then(() => {
+          this.loading = false
+        })
       }
     },
     readerData(rawFile) {
@@ -87,8 +96,13 @@ export default {
           const workbook = XLSX.read(data, { type: 'array' })
           const firstSheetName = workbook.SheetNames[0]
           const worksheet = workbook.Sheets[firstSheetName]
+          // const header = this.getHeaderRow(worksheet)
+          // const results = XLSX.utils.sheet_to_json(worksheet)
+          // const header = this.getHeaderRow(worksheet)
+          // const results = XLSX.utils.sheet_to_json(worksheet)
+          console.log(worksheet)
           const header = this.getHeaderRow(worksheet)
-          const results = XLSX.utils.sheet_to_json(worksheet)
+          const results = XLSX.utils.sheet_to_json(worksheet.splice(0, 1))
           this.generateData({ header, results })
           this.loading = false
           resolve()

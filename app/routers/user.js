@@ -2,6 +2,25 @@ const express = require('express')
 const router = express.Router()
 const userHandler = require('../handler/user')
 
+router.use((req, res, next) => {
+    let token = req.headers['x-token']
+    if (req.url === '/login' || req.url === '/register') {
+        next()
+    } else {
+        userHandler
+        .auth(token)
+        .then((data, decoded) => {
+            if (data.code !== 20000) {
+                res.send(data)
+            } else {
+                if (res.query) res.query.username = decoded.username
+                else if (res.body) res.body.username = decoded.username
+                next()
+            }
+        })
+    }
+})
+
 router.post('/login', (req, res, next) => {
     userHandler
     .login(req.body)
@@ -10,13 +29,21 @@ router.post('/login', (req, res, next) => {
     })
 })
 
+router.post('/logout', (req, res, next) => {
+    userHandler
+    .logout()
+    .then(() => {
+        res.send({
+            code: 20000,
+            message: '成功登出！'
+        })
+    })
+})
+
 router.post('/register', function (req, res, next) {
     userHandler
-    .register(req.body, (err, data) => {
-        if (err) {
-            console.log(err)
-            res.send({ code: 2, message: "注册失败" })
-        }
+    .register(req.body)
+    .then((data) => {
         if (data){
             res.send({
                 code: 20000,
