@@ -186,6 +186,12 @@ export const asyncRoutes = [
       name: 'MeetingUpload',
       component: () => import('@/views/meeting/upload'),
       meta: { title: '会议上传' }
+    }, {
+      path: ':id/meeting-records',
+      name: 'MeetingRecords',
+      component: () => import('@/views/meeting/records'),
+      meta: { title: '会议记录' },
+      hidden: true
     }]
   },
   // {

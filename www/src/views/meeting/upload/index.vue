@@ -22,7 +22,7 @@ export default {
         meeting_date: '会议日期',
         meeting_time: '会议时间',
         meeting_name: '会议主题',
-        brand_name: '品牌',
+        brands: '品牌',
         meeting_type: '会议类型',
         meeting_founder: '会议创建人',
         meeting_attend_form: '参会形式（科室会/微信散点)',

@@ -13,11 +13,10 @@ router.post('/upload', function (req, res, next) {
   const form = new formidable.IncomingForm()
   form.parse(req,function(err, fields, files){
     const sheets = xlsx.parse(fs.readFileSync(files.file.path))
-    const header = sheets[0].data.splice(0, 2)[1]
-    const body = _.deepClone(sheets[0].data)
+    sheets[0].data.splice(0, 2)[1]
     logHandler
     .create({
-      username: req.body.username,
+      username: req.body.decoded.username,
       filename: files.file.name
     })
     .then((log) => {

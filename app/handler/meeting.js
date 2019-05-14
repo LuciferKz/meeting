@@ -2,9 +2,19 @@ const db = require('../db')
 const sql = require('./sql')
 const moment = require('moment')
 
-let meetings = {}
-let brands = {}
+let meetingMaps = {}
+let brandMaps = {}
+let relationMaps = {}
 let logId = null
+
+const createRelationBrandMeeting = function (brandId, meetingId) {
+  return db
+  .query('INSERT INTO relation_brand_meeting ( brand_id, meeting_id) VALUES (?,?)', [brandId, meetingId])
+  .then(data => {
+    relationMaps[`${brandId}_${meetingId}`] = { id: data.insertId }
+    return relationMaps[`${brandId}_${meetingId}`]
+  })
+}
 
 const createBrand = function (name) {
   console.log('开始创建品牌', name)
@@ -12,16 +22,16 @@ const createBrand = function (name) {
   .query('INSERT INTO brand ( name ) VALUES (?)', [name])
   .then(data => {
     console.log('结束创建品牌', data)
-    brands[name] = { id: data.insertId }
-    return brands[name]
+    brandMaps[name] = { id: data.insertId }
+    return brandMaps[name]
   })
 }
 
 const getBrand = function (name) {
   console.log('开始查询品牌', name)
-  if (brands[name]) {
-    console.log('内存查询结果', brands[name])
-    return Promise.resolve(brands[name])
+  if (brandMaps[name]) {
+    console.log('内存查询结果', brandMaps[name])
+    return Promise.resolve(brandMaps[name])
   } else {
     return db
     .query('SELECT * FROM brand WHERE name = ?', [name])
@@ -38,22 +48,22 @@ const getBrand = function (name) {
 
 const createMeeting = function (meeting) {
   console.log('开始创建会议', meeting[3])
-  const [month, meeting_date, meeting_time, theme, brand_id, type, founder] = meeting
+  const [month, meeting_date, meeting_time, theme, brands, type, founder] = meeting
   return db
-  .query('INSERT INTO meeting (theme, brand_id, type, founder, meeting_date, meeting_time) VALUES (?,?,?,?,?,?)', [theme, brand_id, type, founder, meeting_date, meeting_time])
+  .query('INSERT INTO meeting (theme, brands, type, founder, meeting_date, meeting_time) VALUES (?,?,?,?,?,?)', [theme, brands, type, founder, meeting_date, meeting_time])
   .then(data => {
     console.log('结束创建会议信息', data)
-    meetings[theme] = { id: data.insertId }
-    return meetings[theme]
+    meetingMaps[theme] = { id: data.insertId }
+    return meetingMaps[theme]
   })
 }
 
 const getMeeting = function (meeting) {
   let theme = meeting[3]
   console.log('开始查询会议', meeting[3])
-  if (meetings[theme]) {
-    console.log('内存查询结果', meetings[theme])
-    return Promise.resolve(meetings[theme])
+  if (meetingMaps[theme]) {
+    console.log('内存查询结果', meetingMaps[theme])
+    return Promise.resolve(meetingMaps[theme])
   } else {
     return db
     .query('SELECT * FROM meeting WHERE theme = ?', [theme])
@@ -68,50 +78,89 @@ const getMeeting = function (meeting) {
   }
 }
 
+function checkData (data) {
+  let code = 20000
+  let message = null
+  let newDate = []
+  for (let i = 0, len = data.length; i < len; i++) {
+    let row = data[i]
+    if (row.length) {
+      if (!row[3]) {
+        code = 20004
+        message = '有记录缺失主题'
+      } else if (!row[4]) {
+        code = 20004
+        message = '有记录缺失品牌'
+      }
+      newDate.push(row)
+    }
+  }
+  return { code, data: newDate, message }
+}
+
 function* genQueue (data) {
   let current = 0
   while (current < data.length) {
     let row = data[current]
-    if (row.length && row[3]) {
-      yield getBrand(row[4])
-      .then((brand) => {
-        console.log('完成关联品牌', brand.id)
-        row[4] = brand.id
-        return getMeeting(row.splice(0, 7))
+    const brandNames = row[4].split(',')
+    let brandIds = []
+    yield Promise.all(
+      brandNames.map(name => getBrand(name))
+    ).then((brands) => {
+      console.log('完成关联品牌', brands)
+      brandIds = brands.map(b => b.id)
+      return getMeeting(row.splice(0, 7))
+    })
+    .then((meeting) => {
+      console.log('完成关联会议', meeting.id)
+      row.unshift(meeting.id)
+      
+      let proms = []
+      brandIds.forEach(bid => {
+        if (!relationMaps[`${bid}_${meeting.id}`]) {
+          proms.push(createRelationBrandMeeting(bid, meeting.id))
+        }
       })
-      .then((meeting) => {
-        console.log('完成关联会议', meeting.id)
-        row.unshift(meeting.id)
-        row[17] = null
-        row[12] = moment(new Date(1900, 0, row[12] - 1)).format('YYYY-MM-DD HH:mm:ss')
-        row[13] = moment(new Date(1900, 0, row[13] - 1)).format('YYYY-MM-DD HH:mm:ss')
-        row.push(logId)
-        return db
-        .query(sql.MEETING_RECORD_INSERT, row)
-        .then((data) => {
-          return data
-        })
+      return proms.length ? Promise.all([proms]) : true
+    })
+    .then(() => {
+      row[17] = null
+      row[12] = moment(new Date(1900, 0, row[12] - 1)).format('YYYY-MM-DD HH:mm:ss')
+      row[13] = moment(new Date(1900, 0, row[13] - 1)).format('YYYY-MM-DD HH:mm:ss')
+      row.push(logId)
+      return db
+      .query(sql.MEETING_RECORD_INSERT, row)
+      .then((data) => {
+        return data
       })
-    }
+    })
     current++
   }
 }
 
 const importExcel = function (data, gid) {
+  const result = checkData(data)
+  if (result.code !== 20000) {
+    return Promise.resolve(result)
+  }
   logId = gid
   return Promise.all([
     db.query(sql.MEETING_ALL),
-    db.query(sql.BRAND_ALL)
+    db.query(sql.BRAND_ALL),
+    db.query(sql.RELATION_BRAND_MEETING_ALL),
   ])
   .then(res => {
     res[0].forEach((m) => {
-      meetings[m.name] = m
+      meetingMaps[m.name] = m
     })
     res[1].forEach((b) => {
-      brands[b.name] = b
+      brandMaps[b.name] = b
+    })
+    res[2].forEach((reln) => {
+      relationMaps[`${reln.brandId}_${reln.meetingId}`] = reln
     })
 
-    const queue = genQueue(data)
+    const queue = genQueue(result.data)
     return runQueue(queue)
   })
 }
@@ -138,25 +187,39 @@ const runQueue = function (queue) {
 const getMeetings = function (params) {
   let page = parseInt(params.page) - 1
   let limit = parseInt(params.limit)
+  let whereParams = []
+
+  let prom = Promise.resolve()
+  if (params.decoded.brand_id !== 1) {
+    conditionQuery = ' FROM meeting, relation_brand_meeting WHERE meeting.id = relation_brand_meeting.meeting_id and brand_id = ?'
+    conditionParams = [page*limit, limit]
+    whereParams = [params.decoded.brand_id]
+  } else {
+    conditionQuery = ' FROM meeting'
+    whereParams = []
+  }
 
   return Promise.all([
-    db.query('SELECT *, brand.name as brandName FROM meeting LEFT JOIN brand ON meeting.brand_id = brand.id LIMIT ?,?', [page*limit, limit]),
-    db.query('SELECT count(*) as total FROM meeting')
+    db.query('SELECT *' + conditionQuery + ' LIMIT ?,?', [...whereParams, page*limit, limit]),
+    db.query('SELECT count(*) as total' + conditionQuery, [...whereParams])
   ])
   .then(res => {
-      return {
-        code: 20000,
-        data: {
-          items: res[0],
-          total: res[1][0].total
-        },
-        message: '请求成功'
-      }
+    console.log(res)
+    let meetings = res[0]
+    let total = res[1][0].total
+    return {
+      code: 20000,
+      data: {
+        items: meetings,
+        total
+      },
+      message: '请求成功'
+    }
   })
 }
 
 module.exports = {
   importExcel,
-  getMeetings,
-  getBrand
+  getBrand,
+  getMeetings
 }

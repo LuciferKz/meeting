@@ -2,25 +2,6 @@ const express = require('express')
 const router = express.Router()
 const userHandler = require('../handler/user')
 
-router.use((req, res, next) => {
-    let token = req.headers['x-token']
-    if (req.url === '/login' || req.url === '/register') {
-        next()
-    } else {
-        userHandler
-        .auth(token)
-        .then((data, decoded) => {
-            if (data.code !== 20000) {
-                res.send(data)
-            } else {
-                if (res.query) res.query.username = decoded.username
-                else if (res.body) res.body.username = decoded.username
-                next()
-            }
-        })
-    }
-})
-
 router.post('/login', (req, res, next) => {
     userHandler
     .login(req.body)
@@ -72,7 +53,7 @@ router.get('/list', (req, res, next) => {
 
 router.get('/info', (req, res, next) => {
     userHandler
-    .info(req.query.token)
+    .info(req.query)
     .then((data) => {
         res.send(data)
     })

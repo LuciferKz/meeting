@@ -6,22 +6,34 @@ const moment = require('moment')
 
 const secret = 'pingpaihuiyijilu'
 
-const info = function (token) {
-    let decoded = jwt.decode(token, secret)
+const info = function (params) {
+    let username = params.decoded.username ? params.decoded.username : jwt.decode(params.token, secret).username
     return db
-    .query(sql.SQL_USER_INFO, [decoded.username])
+    .query(sql.USER_JOIN_BRAND + ' where `user`.username = ?', [username])
     .then((data) => {
-        return ({
-            code: 20000,
-            data: data ? data[0] : {},
-            message: '请求成功'
-        })
+        if (data && data[0]) {
+            delete data.password
+            return ({
+                code: 20000,
+                data: data[0],
+                message: '请求成功'
+            })
+        } else {
+            return ({
+                code: 20000,
+                data: {},
+                message: '用户不存在'
+            })
+        }
     })
 }
 
 const getUserByName = function (name) {
     return db
-    .query('select * from user where username = ?', [name])
+    .query(sql.USER_ALL + ' where `user`.username = ?', [name])
+    .then(data => {
+        return data[0]
+    })
 }
 
 const getUsers = function (params) {
@@ -43,11 +55,11 @@ const login = function (params, cb) {
         let token = null
 
         if (data) {
-            if (data[0].password === newPwd) {
+            if (data.password === newPwd) {
                 code = 20000
                 message = '登录成功'
                 // 2 * 60 * 60 * 1000
-                token = jwt.encode({ username, expires: Date.now() + 2 * 60 * 60 * 1000 }, secret);
+                token = jwt.encode({ username, brand_id: data.brand_id, roles: data.roles, expires: Date.now() + 2 * 60 * 60 * 1000 }, secret);
             } else {
                 message = '密码错误'
             }
@@ -71,21 +83,23 @@ const auth = function (token) {
         code = 50008
         message = '用户未登录！'
     } else {
-        decoded = jwt.decode(token, secret)
-        if (decoded) {
+        try {
+            decoded = jwt.decode(token, secret)
             if (Date.now() > decoded.expires) {
                 code = 50014
                 message = '登录超时！'
             }
-        } else {
+        } catch (err) {
+            console.log(err)
             code = 50008
             message = 'Token不合理！'
         }
     }
     return Promise.resolve({
         code,
+        data: decoded,
         message
-    }, decoded)
+    })
 }
 
 const register = function (params) {

@@ -1,6 +1,14 @@
 <template>
   <div class="app-container">
-    <el-table v-loading="listLoading" :data="list" border fit highlight-current-row style="width: 100%">
+    <el-table
+      v-loading="listLoading"
+      :data="list"
+      border
+      fit
+      highlight-current-row
+      style="width: 100%"
+      @row-click="handleRowClick"
+    >
       <el-table-column align="center" label="会议日期" width="150">
         <template slot-scope="scope">
           <span>{{ scope.row.meeting_date }}</span>
@@ -21,7 +29,7 @@
 
       <el-table-column width="120px" align="center" label="品牌">
         <template slot-scope="scope">
-          <span>{{ scope.row.brandName }}</span>
+          <span>{{ scope.row.brand_name }}</span>
         </template>
       </el-table-column>
 
@@ -39,9 +47,9 @@
 
       <el-table-column align="center" label="Actions" width="150px">
         <template slot-scope="scope">
-          <router-link :to="'/example/edit/'+scope.row.id">
+          <router-link :to="`/meeting/${scope.row.id}/meeting-records`">
             <el-button type="primary" size="small" icon="el-icon-edit">
-              Edit
+              查看会议记录
             </el-button>
           </router-link>
         </template>
@@ -91,6 +99,9 @@ export default {
         this.total = response.data.total
         this.listLoading = false
       })
+    },
+    handleRowClick(row, column, event) {
+      this.$router.push(`/meeting/${row.id}/meeting-records`)
     }
   }
 }
