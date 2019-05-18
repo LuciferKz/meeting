@@ -17,19 +17,19 @@
 
                 <el-col :span="10">
                   <el-form-item label-width="120px" label="Publush Time:" class="postInfo-container-item">
-                    <el-input v-model="postForm.username"></el-input>
+                    <el-input v-model="postForm.username" />
                   </el-form-item>
                 </el-col>
 
                 <el-col :span="10">
                   <el-form-item label-width="120px" label="Publush Time:" class="postInfo-container-item">
-                    <el-input v-model="postForm.password"></el-input>
+                    <el-input v-model="postForm.password" />
                   </el-form-item>
                 </el-col>
 
                 <el-col :span="10">
                   <el-form-item label-width="120px" label="Publush Time:" class="postInfo-container-item">
-                    <el-input v-model="postForm.rptPassword"></el-input>
+                    <el-input v-model="postForm.rptPassword" />
                   </el-form-item>
                 </el-col>
 
@@ -54,10 +54,10 @@ import { fetchBrand } from '@/api/brand'
 import Warning from './Warning'
 
 const defaultForm = {
-    username: '',
-    password: '',
-    rptPassword: '',
-    brand_id: null,
+  username: '',
+  password: '',
+  rptPassword: '',
+  brand_id: null
 }
 
 export default {
@@ -97,7 +97,7 @@ export default {
   methods: {
     fetchData(id) {
       fetchArticle(id).then(response => {
-          
+
       }).catch(err => {
         console.log(err)
       })
