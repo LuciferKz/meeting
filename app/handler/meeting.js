@@ -17,26 +17,26 @@ const createRelationBrandMeeting = function (brandId, meetingId) {
 }
 
 const createBrand = function (name) {
-  console.log('开始创建品牌', name)
+  // console.log('开始创建品牌', name)
   return db
   .query('INSERT INTO brand ( name ) VALUES (?)', [name])
   .then(data => {
-    console.log('结束创建品牌', data)
+    // console.log('结束创建品牌', data)
     brandMaps[name] = { id: data.insertId }
     return brandMaps[name]
   })
 }
 
 const getBrand = function (name) {
-  console.log('开始查询品牌', name)
+  // console.log('开始查询品牌', name)
   if (brandMaps[name]) {
-    console.log('内存查询结果', brandMaps[name])
+    // console.log('内存查询结果', brandMaps[name])
     return Promise.resolve(brandMaps[name])
   } else {
     return db
     .query('SELECT * FROM brand WHERE name = ?', [name])
     .then(data => {
-      console.log('结束查询品牌')
+      // console.log('结束查询品牌')
       if (data && data.length) {
         return data[0]
       } else {
@@ -47,12 +47,12 @@ const getBrand = function (name) {
 }
 
 const createMeeting = function (meeting) {
-  console.log('开始创建会议', meeting[3])
+  // console.log('开始创建会议', meeting[3])
   const [month, meeting_date, meeting_time, theme, brands, type, founder] = meeting
   return db
   .query('INSERT INTO meeting (theme, brands, type, founder, meeting_date, meeting_time) VALUES (?,?,?,?,?,?)', [theme, brands, type, founder, meeting_date, meeting_time])
   .then(data => {
-    console.log('结束创建会议信息', data)
+    // console.log('结束创建会议信息', data)
     meetingMaps[theme] = { id: data.insertId }
     return meetingMaps[theme]
   })
@@ -60,15 +60,15 @@ const createMeeting = function (meeting) {
 
 const getMeeting = function (meeting) {
   let theme = meeting[3]
-  console.log('开始查询会议', meeting[3])
+  // console.log('开始查询会议', meeting[3])
   if (meetingMaps[theme]) {
-    console.log('内存查询结果', meetingMaps[theme])
+    // console.log('内存查询结果', meetingMaps[theme])
     return Promise.resolve(meetingMaps[theme])
   } else {
     return db
     .query('SELECT * FROM meeting WHERE theme = ?', [theme])
     .then(data => {
-      console.log('结束查询会议')
+      // console.log('结束查询会议')
       if (data && data.length) {
         return data[0]
       } else {
@@ -107,12 +107,12 @@ function* genQueue (data) {
     yield Promise.all(
       brandNames.map(name => getBrand(name))
     ).then((brands) => {
-      console.log('完成关联品牌', brands)
+      // console.log('完成关联品牌', brands)
       brandIds = brands.map(b => b.id)
       return getMeeting(row.splice(0, 7))
     })
     .then((meeting) => {
-      console.log('完成关联会议', meeting.id)
+      // console.log('完成关联会议', meeting.id)
       row.unshift(meeting.id)
       
       let proms = []
@@ -204,7 +204,6 @@ const getMeetings = function (params) {
     db.query('SELECT count(*) as total' + conditionQuery, [...whereParams])
   ])
   .then(res => {
-    console.log(res)
     let meetings = res[0]
     let total = res[1][0].total
     return {

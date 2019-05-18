@@ -194,6 +194,24 @@ export const asyncRoutes = [
       hidden: true
     }]
   },
+  {
+    path: '/user',
+    component: Layout,
+    redirect: '/user/list',
+    name: 'User',
+    meta: { title: '用户管理', icon: 'peoples' },
+    children: [{
+      path: 'list',
+      name: 'UserList',
+      component: () => import('@/views/user/index'),
+      meta: { title: '用户列表' }
+    }, {
+      path: 'create',
+      name: 'UserCreate',
+      component: () => import('@/views/user/create'),
+      meta: { title: '新增用户' }
+    }]
+  },
   // {
   //   path: '/icon',
   //   component: Layout,

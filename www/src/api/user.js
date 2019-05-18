@@ -22,3 +22,18 @@ export function logout() {
     method: 'post'
   })
 }
+
+export function fetchList() {
+  return request({
+    url: '/user/list',
+    method: 'get'
+  })
+}
+
+export function createUser(data) {
+  return request({
+    url: '/user/create',
+    method: 'post',
+    data
+  })
+}

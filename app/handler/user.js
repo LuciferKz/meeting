@@ -90,7 +90,7 @@ const auth = function (token) {
                 message = '登录超时！'
             }
         } catch (err) {
-            console.log(err)
+            // console.log(err)
             code = 50008
             message = 'Token不合理！'
         }
