@@ -23,10 +23,11 @@ export function logout() {
   })
 }
 
-export function fetchList() {
+export function fetchList(query) {
   return request({
     url: '/user/list',
-    method: 'get'
+    method: 'get',
+    params: query
   })
 }
 

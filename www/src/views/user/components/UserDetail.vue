@@ -1,42 +1,43 @@
 <template>
   <div class="createPost-container">
     <el-form ref="postForm" :model="postForm" :rules="rules" class="form-container">
+
+      <sticky :z-index="10" :class-name="'sub-navbar '+postForm.status">
+        <el-button v-loading="loading" style="margin-left: 10px;" type="success" @click="submitForm">
+          保存
+        </el-button>
+      </sticky>
+
       <div class="createPost-main-container">
         <el-row>
-          <Warning />
+          <!-- <Warning /> -->
 
           <el-col :span="24">
-            <el-form-item style="margin-bottom: 40px;" prop="title">
-              <MDinput v-model="postForm.title" :maxlength="100" name="name" required>
-                Title
-              </MDinput>
-            </el-form-item>
-
             <div class="postInfo-container">
               <el-row>
 
                 <el-col :span="10">
-                  <el-form-item label-width="120px" label="Publush Time:" class="postInfo-container-item">
+                  <el-form-item label-width="120px" label="用户名" prop="username" class="postInfo-container-item">
                     <el-input v-model="postForm.username" />
                   </el-form-item>
                 </el-col>
 
                 <el-col :span="10">
-                  <el-form-item label-width="120px" label="Publush Time:" class="postInfo-container-item">
+                  <el-form-item label-width="120px" label="密码" prop="password" class="postInfo-container-item">
                     <el-input v-model="postForm.password" />
                   </el-form-item>
                 </el-col>
 
                 <el-col :span="10">
-                  <el-form-item label-width="120px" label="Publush Time:" class="postInfo-container-item">
+                  <el-form-item label-width="120px" label="确认密码" prop="rptPassword" class="postInfo-container-item">
                     <el-input v-model="postForm.rptPassword" />
                   </el-form-item>
                 </el-col>
 
                 <el-col :span="8">
-                  <el-form-item label-width="60px" label="Author:" class="postInfo-container-item">
-                    <el-select v-model="postForm.author" :remote-method="getRemoteUserList" filterable default-first-option remote placeholder="Search user">
-                      <el-option v-for="(item,index) in userListOptions" :key="item+index" :label="item" :value="item" />
+                  <el-form-item label-width="120px" label="品牌" prop="brandId" class="postInfo-container-item">
+                    <el-select v-model="postForm.brandId" placeholder="请选择品牌">
+                      <el-option v-for="(item,index) in brandListOptions" :key="item+index" :label="item.label" :value="item.value" />
                     </el-select>
                   </el-form-item>
                 </el-col>
@@ -50,18 +51,29 @@
 </template>
 
 <script>
-import { fetchBrand } from '@/api/brand'
-import Warning from './Warning'
+import { fetchBrandList } from '@/api/brand'
+import { createUser } from '@/api/user'
+import MDinput from '@/components/MDinput'
+import Sticky from '@/components/Sticky' // 粘性header组件
+// import Warning from './Warning'
 
 const defaultForm = {
   username: '',
   password: '',
   rptPassword: '',
-  brand_id: null
+  brandId: null
+}
+
+const defaultFormLabels = {
+  username: '用户名',
+  password: '密码',
+  rptPassword: '确认密码',
+  brandId: '品牌'
 }
 
 export default {
   name: 'UserDetail',
+  components: { MDinput, Sticky },
   props: {
     isEdit: {
       type: Boolean,
@@ -70,12 +82,12 @@ export default {
   },
   data() {
     const validateRequire = (rule, value, callback) => {
-      if (value === '') {
+      if (value === '' || value === null) {
         this.$message({
-          message: rule.field + '为必传项',
+          message: defaultFormLabels[rule.field] + '为必传项',
           type: 'error'
         })
-        callback(new Error(rule.field + '为必传项'))
+        callback(new Error(defaultFormLabels[rule.field] + '为必传项'))
       } else {
         callback()
       }
@@ -83,10 +95,18 @@ export default {
     return {
       postForm: Object.assign({}, defaultForm),
       loading: false,
-      brandListOptions: []
+      brandListOptions: [],
+      rules: {
+        username: [{ validator: validateRequire }],
+        password: [{ validator: validateRequire }],
+        rptPassword: [{ validator: validateRequire }],
+        brandId: [{ validator: validateRequire }]
+      }
     }
   },
   created() {
+    this.fetchBrandList()
+
     if (this.isEdit) {
       const id = this.$route.params && this.$route.params.id
       this.fetchData(id)
@@ -95,12 +115,23 @@ export default {
     }
   },
   methods: {
+    fetchBrandList() {
+      return fetchBrandList()
+        .then(res => {
+          this.brandListOptions = res.data.items.map(brand => {
+            return {
+              value: brand.id,
+              label: brand.name
+            }
+          })
+        })
+    },
     fetchData(id) {
-      fetchArticle(id).then(response => {
+      // fetchArticle(id).then(response => {
 
-      }).catch(err => {
-        console.log(err)
-      })
+      // }).catch(err => {
+      //   console.log(err)
+      // })
     },
     setTagsViewTitle() {
       const title = 'Edit Article'
@@ -112,14 +143,20 @@ export default {
       this.$refs.postForm.validate(valid => {
         if (valid) {
           this.loading = true
-          this.$notify({
-            title: '成功',
-            message: '创建成功',
-            type: 'success',
-            duration: 2000
-          })
-          this.postForm.status = 'published'
-          this.loading = false
+
+          createUser(this.postForm)
+            .then(res => {
+              this.$notify({
+                title: '成功',
+                message: '创建成功',
+                type: 'success',
+                duration: 2000
+              })
+              this.postForm.status = '已创建'
+              this.loading = false
+
+              this.$router.push('/user/list')
+            })
         } else {
           console.log('error submit!!')
           return false

@@ -37,10 +37,22 @@ const getUserByName = function (name) {
 }
 
 const getUsers = function (params) {
-    let offset = parseInt(params.offset)
+    let page = parseInt(params.page) - 1
     let limit = parseInt(params.limit)
-    return db
-    .query(sql.SQL_USER_LIST, [offset, limit])
+    return Promise.all([
+        db.query(sql.USER_LIST, [page*limit, limit]),
+        db.query(sql.COUNT_USER)
+    ])
+    .then(res => {
+        return {
+            code: 20000,
+            data: {
+                items: res[0],
+                total: res[1][0].total
+            },
+            message: '获取成功'
+        }
+    })
 }
 
 const login = function (params, cb) {
@@ -102,13 +114,24 @@ const auth = function (token) {
     })
 }
 
-const register = function (params) {
+const create = function (params) {
     let username = params.username
     let password = params.password
     let md5 = crypto.createHash("md5")
     let newPwd = md5.update(password).digest("hex");
     return db
-    .query(sql.SQL_USER_INSERT, [username, newPwd, params.brandId, moment().format('YYYY-MM-DD HH:MM:SS'), moment().format('YYYY-MM-DD HH:MM:SS')])
+    .query(sql.USER_INSERT, [username, newPwd, params.brandId, moment().format('YYYY-MM-DD HH:MM:SS'), moment().format('YYYY-MM-DD HH:MM:SS')])
+    .then(data => {
+        return {
+            code: 20000,
+            data: {
+                user: {
+                    id: data.insertId
+                },
+            },
+            message: "新建成功"
+        }
+    })
 }
 
 module.exports = {
@@ -116,7 +139,7 @@ module.exports = {
     getUsers,
     login,
     logout,
-    register,
+    create,
     info,
     auth
 }

@@ -21,20 +21,12 @@ router.post('/logout', (req, res, next) => {
     })
 })
 
-router.post('/register', function (req, res, next) {
+router.post('/create', function (req, res, next) {
     userHandler
-    .register(req.body)
+    .create(req.body)
     .then((data) => {
         if (data){
-            res.send({
-                code: 20000,
-                data: {
-                    user: {
-                        id: data.insertId.id
-                    },
-                },
-                message: "注册成功"
-            })
+            res.send(data)
         }
     })
 })
@@ -43,11 +35,7 @@ router.get('/list', (req, res, next) => {
     userHandler
     .getUsers(req.query)
     .then((data) => {
-        res.send({
-            code: 20000,
-            data,
-            message: '获取成功'
-        })
+        res.send(data)
     })
 })
 
