@@ -32,7 +32,7 @@ const getUserByName = function (name) {
     return db
     .query(sql.USER_ALL + ' where `user`.username = ?', [name])
     .then(data => {
-        return data && data[0]
+        return data ? data[0] : null
     })
 }
 
