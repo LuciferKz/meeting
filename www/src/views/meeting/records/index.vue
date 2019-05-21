@@ -1,6 +1,11 @@
 <template>
   <div class="app-container">
     <el-table v-loading="listLoading" :data="list" border fit highlight-current-row style="width: 100%">
+      <el-table-column align="center" label="月份" width="150">
+        <template slot-scope="scope">
+          <span>{{ scope.row.meeting_date.split('-')[1] }}</span>
+        </template>
+      </el-table-column>
       <el-table-column v-for="(item, key) of tableHeader" :key="key" :prop="key" :label="item" />
     </el-table>
 
@@ -36,7 +41,7 @@ export default {
         limit: 20
       },
       tableHeader: {
-        month: '月份',
+        // month: '月份',
         meeting_date: '会议日期',
         meeting_time: '会议时间',
         meeting_name: '会议主题',
