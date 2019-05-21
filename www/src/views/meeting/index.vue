@@ -29,7 +29,7 @@
 
       <el-table-column width="120px" align="center" label="品牌">
         <template slot-scope="scope">
-          <span>{{ scope.row.brand_name }}</span>
+          <span>{{ scope.row.brands }}</span>
         </template>
       </el-table-column>
 
