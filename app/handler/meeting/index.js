@@ -1,6 +1,9 @@
-const db = require('../db')
-const sql = require('./sql')
+const db = require('../../db')
+const sql = require('../sql')
 const moment = require('moment')
+const formidable = require('formidable')
+const xlsx = require('node-xlsx')
+const fs = require('fs')
 
 let meetingMaps = {}
 let brandMaps = {}
@@ -184,7 +187,8 @@ const runQueue = function (queue) {
   }
 }
 
-const getMeetings = function (params) {
+const getMeetings = function (req, res) {
+  let params = req.query
   let page = parseInt(params.page) - 1
   let limit = parseInt(params.limit)
   let whereParams = []
@@ -203,22 +207,40 @@ const getMeetings = function (params) {
     db.query('SELECT *' + conditionQuery + ' LIMIT ?,?', [...whereParams, page*limit, limit]),
     db.query('SELECT count(*) as total' + conditionQuery, [...whereParams])
   ])
-  .then(res => {
-    let meetings = res[0]
-    let total = res[1][0].total
-    return {
+  .then(data => {
+    let meetings = data[0]
+    let total = data[1][0].total
+    res.send({
       code: 20000,
       data: {
         items: meetings,
         total
       },
       message: '请求成功'
-    }
+    })
   })
 }
 
+const upload = function (req, res) {
+  const form = new formidable.IncomingForm()
+  form.parse(req,function(err, fields, files){
+    const sheets = xlsx.parse(fs.readFileSync(files.file.path))
+    sheets[0].data.splice(0, 2)[1]
+    const params = {
+      username: req.body.decoded.username,
+      filename: files.file.name
+    }
+    db.query(sql.LOG_CREATE,[params.username, params.filename, 'upload', moment().format('YYYY-MM-DD HH:mm:ss')])
+    .then((log) => {
+      importExcel(sheets[0].data, log.insertId)
+      .then((data) => {
+        res.send(data)
+      })
+    })
+  });
+}
+
 module.exports = {
-  importExcel,
-  getBrand,
-  getMeetings
+  getMeetings,
+  upload
 }

@@ -38,3 +38,10 @@ export function createUser(data) {
     data
   })
 }
+export function deleteUser(data) {
+  return request({
+    url: '/user/delete',
+    method: 'post',
+    data
+  })
+}

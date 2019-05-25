@@ -1,11 +1,11 @@
-const db = require('../db/index.js')
+const db = require('../../db')
 const routes = require('./routes')
 
-const fetchAll = function () {
+const fetchAll = function (req, res) {
     return db
     .query('select * from role')
     .then(data => {
-        resolve({
+        res.send({
             code: 20000,
             data,
             message: '请求成功'
@@ -13,8 +13,8 @@ const fetchAll = function () {
     })
 }
 
-const fetchRoutes = function () {
-    return Promise.resolve({
+const fetchRoutes = function (req, res) {
+    return res.send({
         code: 20000,
         data: routes,
         message: '请求成功'

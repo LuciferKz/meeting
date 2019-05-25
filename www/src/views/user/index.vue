@@ -30,6 +30,12 @@
           <span>{{ scope.row.updateAt }}</span>
         </template>
       </el-table-column>
+
+      <el-table-column align="center" label="Actions" width="150px">
+        <template slot-scope="scope">
+          <el-button type="primary" size="small" icon="el-icon-delete" @click="deleteUser(scope.row)">删除</el-button>
+        </template>
+      </el-table-column>
     </el-table>
 
     <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="getList" />
@@ -74,6 +80,21 @@ export default {
         this.list = response.data.items
         this.total = response.data.total
         this.listLoading = false
+      })
+    },
+    deleteUser (row) {
+      this.$confirm(`是否确认删除用户${row.username}`, 'Warning', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+      .then(() => {
+        deleteUser({
+          id: row.id
+        })
+        .then(response => {
+          this.getList()
+        })
       })
     }
   }

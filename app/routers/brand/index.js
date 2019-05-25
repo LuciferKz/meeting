@@ -1,13 +1,9 @@
 const express = require('express')
 const router = express.Router()
-const brandHandler = require('../handler/brand')
+const handler = require('../../handler')
 
 router.get('/list', function (req, res, next) {
-  brandHandler
-  .getBrands(req.query)
-  .then((data) => {
-    res.send(data)
-  })
+  handler.brand.getBrands(req, res)
 })
 
 module.exports = router

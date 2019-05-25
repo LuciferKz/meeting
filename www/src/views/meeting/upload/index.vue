@@ -79,6 +79,7 @@ export default {
           formData.append('file', rawFile, 'temp.xlsx')
           uploadMeeting(formData)
             .then(res => {
+              this.$message.success('上传成功')
               res.data.forEach(row => {
                 row.month = parseInt(row.meeting_date.split('-')[1]) + '月份'
               })

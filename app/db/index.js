@@ -17,7 +17,7 @@ db.query = function () {
     if (typeof last !== 'function') {
         return new Promise((resolve, reject) => {
             let cb = function (err, data, fields) {
-                if (err) return reject(err)
+                if (err) reject(err)
                 resolve(data, fields)
             }
             args.push(cb)
