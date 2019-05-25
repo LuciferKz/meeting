@@ -9,13 +9,13 @@
       style="width: 100%"
       @row-click="handleRowClick"
     >
-      <el-table-column align="center" label="会议日期" width="150">
+      <el-table-column align="center" label="会议日期">
         <template slot-scope="scope">
           <span>{{ scope.row.meeting_date }}</span>
         </template>
       </el-table-column>
 
-      <el-table-column align="center" width="150px" label="会议时间">
+      <el-table-column align="center" label="会议时间">
         <template slot-scope="scope">
           <span>{{ scope.row.meeting_time }}</span>
         </template>
@@ -27,25 +27,25 @@
         </template>
       </el-table-column>
 
-      <el-table-column width="120px" align="center" label="品牌">
+      <el-table-column align="center" label="品牌">
         <template slot-scope="scope">
           <span>{{ scope.row.brands }}</span>
         </template>
       </el-table-column>
 
-      <el-table-column align="center" width="150px" label="会议类型">
+      <el-table-column align="center" label="会议类型">
         <template slot-scope="scope">
           <span>{{ scope.row.type }}</span>
         </template>
       </el-table-column>
 
-      <el-table-column align="center" width="150px" class-name="status-col" label="会议创建人">
+      <el-table-column align="center" class-name="status-col" label="会议创建人">
         <template slot-scope="scope">
           <span>{{ scope.row.founder }}</span>
         </template>
       </el-table-column>
 
-      <el-table-column align="center" label="Actions" width="150px">
+      <el-table-column align="center" label="Actions">
         <template slot-scope="scope">
           <router-link :to="`/meeting/${scope.row.id}/meeting-records`">
             <el-button type="primary" size="small" icon="el-icon-edit">

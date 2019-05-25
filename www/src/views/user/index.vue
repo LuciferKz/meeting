@@ -82,20 +82,20 @@ export default {
         this.listLoading = false
       })
     },
-    deleteUser (row) {
+    deleteUser(row) {
       this.$confirm(`是否确认删除用户${row.username}`, 'Warning', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       })
-      .then(() => {
-        deleteUser({
-          id: row.id
+        .then(() => {
+          deleteUser({
+            id: row.id
+          })
+            .then(response => {
+              this.getList()
+            })
         })
-        .then(response => {
-          this.getList()
-        })
-      })
     }
   }
 }
