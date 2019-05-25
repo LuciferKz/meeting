@@ -7,7 +7,8 @@ function handleError () {
         host: '120.55.55.34',
         port: 3306,
         database: 'test',
-        timezone: "08:00"
+        timezone: "08:00",
+        useConnectionPooling: true
     })
 
     //连接错误，2秒重试

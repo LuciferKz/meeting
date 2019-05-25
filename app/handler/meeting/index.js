@@ -232,10 +232,17 @@ const upload = function (req, res) {
     }
     db.query(sql.LOG_CREATE,[params.username, params.filename, 'upload', moment().format('YYYY-MM-DD HH:mm:ss')])
     .then((log) => {
-      importExcel(sheets[0].data, log.insertId)
-      .then((data) => {
-        res.send(data)
-      })
+      if (log) {
+        importExcel(sheets[0].data, log.insertId)
+        .then((data) => {
+          res.send(data)
+        })
+      } else {
+        res.send({
+          code: 20002,
+          message: '日志生成失败'
+        })
+      }
     })
   });
 }

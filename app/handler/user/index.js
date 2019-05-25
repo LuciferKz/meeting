@@ -150,15 +150,22 @@ const create = function (req, res) {
   return db
   .query(sql.USER_INSERT, [username, newPwd, params.brandId, moment().format('YYYY-MM-DD HH:MM:SS'), moment().format('YYYY-MM-DD HH:MM:SS')])
   .then(data => {
-    res.send({
-      code: 20000,
-      data: {
-        user: {
-          id: data.insertId
+    if (data) {
+      res.send({
+        code: 20000,
+        data: {
+          user: {
+            id: data.insertId
+          },
         },
-      },
-      message: "新建成功"
-    })
+        message: "新建成功"
+      })
+    } else {
+      res.send({
+        code: 20002,
+        message: "创建失败"
+      })
+    }
   })
 }
 
