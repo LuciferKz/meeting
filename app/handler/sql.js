@@ -1,6 +1,10 @@
 module.exports = {
     BRAND_ALL: 'SELECT * FROM brand WHERE id != 1',
     COUNT_BRAND: 'SELECT count(*) as total FROM brand',
+
+    LOG_ALL: 'SELECT * FROM upload_log',
+    COUNT_LOG: 'SELECT count(*) as total FROM upload_log',
+
     USER_INSERT: 'INSERT INTO user(username,password,brand_id,createAt,updateAt) Values(?,?,?,?,?)',
     USER_JOIN_BRAND: 'SELECT `user`.username, `user`.password, `user`.brand_id, `brand`.name as brandName, `user`.createAt, `user`.updateAt, `user`.avatar, `user`.roles, `user`.introduction FROM user LEFT JOIN brand ON user.brand_id = brand.id',
     USER_ALL: 'SELECT * FROM user',

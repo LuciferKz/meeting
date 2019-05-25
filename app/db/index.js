@@ -42,7 +42,7 @@ function handleError () {
                 query.apply(db, args)
             })
             .catch(err => {
-                console.log(err)
+                throw err;
             })
         } else {
             query.apply(db, args)

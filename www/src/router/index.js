@@ -212,6 +212,18 @@ export const asyncRoutes = [
       meta: { title: '新增用户' }
     }]
   },
+  {
+    path: '/log',
+    component: Layout,
+    name: 'Log',
+    meta: { title: '操作日志', icon: 'peoples' },
+    children: [{
+      path: 'list',
+      name: 'LogList',
+      component: () => import('@/views/log/index'),
+      meta: { title: '上传记录' }
+    }]
+  },
   // {
   //   path: '/icon',
   //   component: Layout,

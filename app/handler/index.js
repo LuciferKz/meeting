@@ -13,7 +13,7 @@ for (let module in handler) {
         let originHandler = _handler[name]
         _handler[name] = function (req, res, next) {
             try {
-                originHandler(req, res, next);
+                originHandler(req, res, next)
             } catch(err) {
                 var errorMsg
                     = '\n'

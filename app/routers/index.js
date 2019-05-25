@@ -5,6 +5,7 @@ const role = require('./role')
 const brand = require('./brand')
 const meeting = require('./meeting')
 const meetingRecord = require('./meeting-record')
+const log = require('./log')
 const handler = require('../handler')
 
 router.use((req, res, next) => {
@@ -19,5 +20,6 @@ router.use('/role', role)
 router.use('/meeting', meeting)
 router.use('/meeting-record', meetingRecord)
 router.use('/brand', brand)
+router.use('/log', log)
 
 module.exports = router
