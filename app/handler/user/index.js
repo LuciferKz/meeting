@@ -166,7 +166,7 @@ const create = function (req, res) {
 
 
   let avatar = 'https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif';
-  let roles = '[editor]';
+  let roles = '["editor"]';
   let introduction = '品牌账号';
   let createDate = moment().format('YYYY-MM-DD HH:mm:ss');
   let updateDate = moment().format('YYYY-MM-DD HH:mm:ss')
@@ -195,13 +195,20 @@ const create = function (req, res) {
 
 const deleteUser = function (req, res) {
   const params = req.body
-  return query('DELETE user WHERE id = ?', [params.id])
-  .then(data => {
+  if (params.id === 1) {
     res.send({
-      code: 20000,
-      message: "删除成功"
+      code: 2,
+      message: '不能删除管理员账号'
     })
-  })
+  } else {
+    return query('DELETE FROM user WHERE id = ?', [params.id])
+    .then(data => {
+      res.send({
+        code: 20000,
+        message: "删除成功"
+      })
+    })
+  }
 }
 
 module.exports = {

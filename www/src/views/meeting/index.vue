@@ -85,7 +85,8 @@ export default {
       listQuery: {
         page: 1,
         limit: 20
-      }
+      },
+      brandId: null
     }
   },
   created() {

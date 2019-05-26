@@ -37,7 +37,7 @@
 </template>
 
 <script>
-import { fetchList } from '@/api/user'
+import { fetchList, deleteUser } from '@/api/user'
 import Pagination from '@/components/Pagination' // Secondary package based on el-pagination
 
 export default {
@@ -86,9 +86,10 @@ export default {
           deleteUser({
             id: row.id
           })
-            .then(response => {
-              this.getList()
-            })
+          .then(response => {
+            this.$message.success(response.message)
+            this.getList()
+          })
         })
     }
   }

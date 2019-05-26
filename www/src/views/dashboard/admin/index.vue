@@ -2,7 +2,7 @@
   <div class="dashboard-editor-container">
     <!-- <github-corner class="github-corner" /> -->
     <div class="filter-container">
-      <el-select v-model="listQuery.brandId" placeholder="品牌" clearable style="width: 180px" class="filter-item">
+      <el-select v-if="isAdmin" v-model="listQuery.brandId" placeholder="品牌" clearable style="width: 180px" class="filter-item" @change="getMeetings">
         <el-option v-for="item in brandListOptions" :key="item.value" :label="item.label" :value="item.value" />
       </el-select>
       <el-select v-model="listQuery.meetingId" placeholder="会议主题" clearable style="width: 180px" class="filter-item">
@@ -12,7 +12,7 @@
         <el-option v-for="item in calendarTypeOptions" :key="item.key" :label="item.display_name+'('+item.key+')'" :value="item.key" />
       </el-select>
       <el-date-time v-model="listQuery.month" style="width: 140px" class="filter-item" @change="handleFilter"></el-date-time> -->
-      <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
+      <el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
         搜索
       </el-button>
     </div>
@@ -95,6 +95,7 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 import GithubCorner from '@/components/GithubCorner'
 import PanelGroup from './components/PanelGroup'
 import LineChart from './components/LineChart'
@@ -273,7 +274,9 @@ export default {
         year: null,
         month: null
       },
-      brandListOptions: []
+      brandListOptions: [],
+      meetingListOptions: [],
+      isAdmin: false
     }
   },
   created() {
@@ -286,20 +289,33 @@ export default {
         }
       })
     })
-    fetchMeetingList({ page: 1, limit: 100 })
-    .then(res => {
-      this.brandListOptions = req.data.items.map(m => {
-        return {
-          value: m.id,
-          label: m.theme
-        }
-      })
-    })
+    this.getMeetings()
     this.getData()
+  },
+  computed: {
+    ...mapGetters([
+      'roles'
+    ])
+  },
+  mounted () {
+    this.isAdmin = this.roles.includes('admin')
+    console.log(this.isAdmin)
   },
   methods: {
     handleSetChartData(type) {
       this.chartData = chartData[type]
+    },
+
+    getMeetings() {
+      fetchMeetingList({ page: 1, limit: 100, brandId: this.listQuery.brandId })
+      .then(res => {
+        this.meetingListOptions = res.data.items.map(m => {
+          return {
+            value: m.id,
+            label: m.theme
+          }
+        })
+      })
     },
 
     getData() {

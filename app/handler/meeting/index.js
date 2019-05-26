@@ -1,4 +1,3 @@
-const initializeDb = require('../../db');
 const sql = require('../sql');
 const moment = require('moment');
 const formidable = require('formidable');
@@ -8,15 +7,12 @@ const query = require('../../db/query');
 
 let meetingMaps = {};
 let brandMaps = {};
-let relationMaps = {};
 let logId = null;
-let db;
 
 const createRelationBrandMeeting = function (brandId, meetingId) {
-  return query('INSERT INTO relation_brand_meeting ( brand_id, meeting_id) VALUES (?,?)', [brandId, meetingId])
+  return query('INSERT IGNORE INTO relation_brand_meeting (brand_id,meeting_id,relation_key) VALUES (?,?,?)', [brandId, meetingId, `${brandId}_${meetingId}`])
   .then(data => {
-    relationMaps[`${brandId}_${meetingId}`] = { id: data.insertId };
-    return relationMaps[`${brandId}_${meetingId}`];
+    return { id: data.insertId };
   })
 }
 
@@ -118,10 +114,7 @@ function* genQueue (data) {
       
       let proms = [];
       brandIds.forEach(bid => {
-        if (!relationMaps[`${bid}_${meeting.id}`]) {
-          relationMaps[`${bid}_${meeting.id}`] = 'pending'
-          proms.push(createRelationBrandMeeting(bid, meeting.id));
-        }
+        proms.push(createRelationBrandMeeting(bid, meeting.id));
       })
       return proms.length ? Promise.all([proms]) : true;
     })
@@ -161,9 +154,6 @@ const importExcel = function (data, gid) {
     res[1].forEach((b) => {
       brandMaps[b.name] = b
     })
-    res[2].forEach((reln) => {
-      relationMaps[`${reln.brandId}_${reln.meetingId}`] = reln
-    })
 
     const queue = genQueue(result.data)
     return runQueue(queue)
@@ -198,12 +188,13 @@ const getMeetings = function (req, res) {
   let page = parseInt(params.page) - 1
   let limit = parseInt(params.limit)
   let whereParams = []
+  let brandId = params.brandId || params.decoded.brand_id
 
   let prom = Promise.resolve()
-  if (params.decoded.brand_id !== 1) {
+  if (brandId !== 1) {
     conditionQuery = ' FROM meeting, relation_brand_meeting WHERE meeting.id = relation_brand_meeting.meeting_id and relation_brand_meeting.brand_id = ?'
     conditionParams = [page*limit, limit]
-    whereParams = [params.decoded.brand_id]
+    whereParams = [brandId]
   } else {
     conditionQuery = ' FROM meeting'
     whereParams = []

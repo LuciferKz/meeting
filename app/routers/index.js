@@ -28,21 +28,22 @@ router.use('/dashboard', function (req, res, next) {
   let params = req.query
 
   let strCondition = '';
-  let groupCondition = '';
+  let groupStrCondition = '';
   let condition = [];
+  let groupCondition = [];
   let conditionValues = [];
   let groupConditionValues = [];
   if (params.brandId) {
-    condition.push('FIND_IN_SET(?,brand_id)')
+    condition.push('find_in_set(?,brand_id)')
     conditionValues.push(params.brandId)
-    groupCondition.push('FIND_IN_SET(?,brand_id)')
+    groupCondition.push('find_in_set(?,brand_id)')
     groupConditionValues.push(params.brandId)
   }
-  if (params.theme) {
-    condition.push('meeting.theme = ?')
-    conditionValues.push(params.theme)
-    groupCondition.push('meeting.theme = ?')
-    groupConditionValues.push(params.theme)
+  if (params.meetingId) {
+    condition.push('meeting_id = ?')
+    conditionValues.push(params.meetingId)
+    groupCondition.push('meeting_id = ?')
+    groupConditionValues.push(params.meetingId)
   }
   if (params.year) {
     groupCondition.push('year(meeting.meeting_date) = ?')
@@ -54,22 +55,24 @@ router.use('/dashboard', function (req, res, next) {
   }
   if (condition.length) strCondition = 'WHERE ' + condition.join(' and ')
 
-  console.log(strCondition)
+  if (groupCondition.length) groupStrCondition = 'WHERE ' + groupCondition.join(' and ')
+
+  const DISTRICT_QUERY = 'SELECT sum(attend_doctor_count) as attendDoctorCount, sum(attend_wechat_doctors_count) as attendWechatDoctorsCount, sum(attend_director_count) as attendDirectorCount, sum(ifnull(attend_doctor_count,0) + ifnull(attend_wechat_doctors_count,0) + ifnull(attend_director_count,0)) as totalAttendCount, director_district FROM meeting_record '+ groupStrCondition +' group by director_district order by totalAttendCount desc limit 0,20'
 
   Promise
   .all([
     // 会议场数 覆盖医生 覆盖代表 参会总人数
     query('SELECT month(meeting_date) as month, count(*) as meetingCount, sum(attend_doctor_count) as doctorCount,sum(attend_director_count) as directorCount, sum(attend_wechat_doctors_count) as wechatDoctorCount FROM meeting_record as mr INNER JOIN meeting AS m ON m.id = mr.meeting_id '+ strCondition +' group by month(meeting_date);', conditionValues),
     // 医院数 平均观看时长
-    query('SELECT count(distinct doctor_hos) as countHospital, avg(stream_duration) as avgStreamDuration FROM meeting_record;'),
+    query('SELECT count(distinct doctor_hos) as countHospital, avg(stream_duration) as avgStreamDuration FROM meeting_record '+ groupStrCondition +';', groupConditionValues),
     // 大区根据总人数排序 参会医生 + 散会医生 + 参会代表
-    query('SELECT sum(attend_doctor_count) as attendDoctorCount, sum(attend_wechat_doctors_count) as attendWechatDoctorsCount, sum(attend_director_count) as attendDirectorCount, sum(ifnull(attend_doctor_count,0) + ifnull(attend_wechat_doctors_count,0) + ifnull(attend_director_count,0)) as totalAttendCount, director_district FROM meeting_record '+ strCondition +' group by director_district order by totalAttendCount desc limit 0,20'),
+    query(DISTRICT_QUERY, groupConditionValues),
     // 大区根据总人数排序 参会医生 + 散会医生 + 参会代表
-    query('SELECT sum(attend_doctor_count) as attendDoctorCount, sum(attend_wechat_doctors_count) as attendWechatDoctorsCount, sum(attend_director_count) as attendDirectorCount, sum(ifnull(attend_doctor_count,0) + ifnull(attend_wechat_doctors_count,0) + ifnull(attend_director_count,0)) as totalAttendCount, doctor_province FROM meeting_record '+ strCondition +' group by doctor_province order by totalAttendCount desc limit 0,20'),
+    query('SELECT sum(attend_doctor_count) as attendDoctorCount, sum(attend_wechat_doctors_count) as attendWechatDoctorsCount, sum(attend_director_count) as attendDirectorCount, sum(ifnull(attend_doctor_count,0) + ifnull(attend_wechat_doctors_count,0) + ifnull(attend_director_count,0)) as totalAttendCount, doctor_province FROM meeting_record '+ groupStrCondition +' group by doctor_province order by totalAttendCount desc limit 0,20', groupConditionValues),
     // 大区根据总人数排序 参会医生 + 散会医生 + 参会代表
-    query('SELECT sum(attend_doctor_count) as attendDoctorCount, sum(attend_wechat_doctors_count) as attendWechatDoctorsCount, sum(attend_director_count) as attendDirectorCount, sum(ifnull(attend_doctor_count,0) + ifnull(attend_wechat_doctors_count,0) + ifnull(attend_director_count,0)) as totalAttendCount, doctor_city FROM meeting_record '+ strCondition +' group by doctor_city order by totalAttendCount desc limit 0,20'),
+    query('SELECT sum(attend_doctor_count) as attendDoctorCount, sum(attend_wechat_doctors_count) as attendWechatDoctorsCount, sum(attend_director_count) as attendDirectorCount, sum(ifnull(attend_doctor_count,0) + ifnull(attend_wechat_doctors_count,0) + ifnull(attend_director_count,0)) as totalAttendCount, doctor_city FROM meeting_record '+ groupStrCondition +' group by doctor_city order by totalAttendCount desc limit 0,20', groupConditionValues),
     // 科室分布
-    query('SELECT sum(ifnull(attend_doctor_count,0) + ifnull(attend_wechat_doctors_count,0) + ifnull(attend_director_count,0)) as deptAttendCount, doctor_dept FROM meeting_record '+ strCondition +' group by doctor_dept;')
+    query('SELECT sum(ifnull(attend_doctor_count,0) + ifnull(attend_wechat_doctors_count,0) + ifnull(attend_director_count,0)) as deptAttendCount, doctor_dept FROM meeting_record '+ groupStrCondition +' group by doctor_dept;', groupConditionValues)
   ])
   .then(data => {
     let bar = data[0];

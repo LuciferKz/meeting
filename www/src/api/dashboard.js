@@ -1,9 +1,9 @@
 import request from '@/utils/request'
 
-export function fetchData(data) {
+export function fetchData(params) {
   return request({
     url: '/dashboard',
-    method: 'post',
-    data
+    method: 'get',
+    params
   })
 }
