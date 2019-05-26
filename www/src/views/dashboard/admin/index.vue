@@ -1,6 +1,21 @@
 <template>
   <div class="dashboard-editor-container">
     <!-- <github-corner class="github-corner" /> -->
+    <div class="filter-container">
+      <el-select v-model="listQuery.brandId" placeholder="品牌" clearable style="width: 180px" class="filter-item">
+        <el-option v-for="item in brandListOptions" :key="item.value" :label="item.label" :value="item.value" />
+      </el-select>
+      <el-select v-model="listQuery.brandId" placeholder="会议主题" clearable style="width: 180px" class="filter-item">
+        <el-option v-for="item in meetingListOptions" :key="item.value" :label="item.label" :value="item.value" />
+      </el-select>
+      <!-- <el-select v-model="listQuery.year" placeholder="Type" clearable class="filter-item" style="width: 130px">
+        <el-option v-for="item in calendarTypeOptions" :key="item.key" :label="item.display_name+'('+item.key+')'" :value="item.key" />
+      </el-select>
+      <el-date-time v-model="listQuery.month" style="width: 140px" class="filter-item" @change="handleFilter"></el-date-time> -->
+      <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
+        搜索
+      </el-button>
+    </div>
 
     <panel-group :data="chartData" />
 
@@ -88,6 +103,8 @@ import PieChart from './components/PieChart'
 import BarChart from './components/BarChart'
 import { fetchData } from '@/api/dashboard'
 import { deepClone } from '@/utils'
+import { fetchBrandList } from '@/api/brand'
+import { fetchList as fetchMeetingList } from '@/api/meeting'
 // import TransactionTable from './components/TransactionTable'
 // import TodoList from './components/TodoList'
 // import BoxCard from './components/BoxCard'
@@ -249,10 +266,35 @@ export default {
       showDistrictGroup: false,
       showProvinceGroup: false,
       showCityGroup: false,
-      showDeptGroup: false
+      showDeptGroup: false,
+      listQuery: {
+        brandId: null,
+        theme: '',
+        year: null,
+        month: null
+      },
+      brandListOptions: []
     }
   },
   created() {
+    fetchBrandList()
+    .then(res => {
+      this.brandListOptions = res.data.items.map(brand => {
+        return {
+          value: brand.id,
+          label: brand.name
+        }
+      })
+    })
+    fetchMeetingList({ page: 1, limit: 100 })
+    .then(res => {
+      this.brandListOptions = req.data.items.map(m => {
+        return {
+          value: m.id,
+          label: m.theme
+        }
+      })
+    })
     this.getData()
   },
   methods: {
@@ -261,7 +303,7 @@ export default {
     },
 
     getData() {
-      fetchData()
+      fetchData(this.listQuery)
         .then((res) => {
           console.log(res)
           const data = res.data

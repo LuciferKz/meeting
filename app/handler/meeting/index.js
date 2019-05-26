@@ -36,8 +36,7 @@ const getBrand = function (name) {
     // console.log('内存查询结果', brandMaps[name])
     return Promise.resolve(brandMaps[name]);
   } else {
-    return db
-    .query('SELECT * FROM brand WHERE name = ?', [name])
+    return query('SELECT * FROM brand WHERE name = ?', [name])
     .then(data => {
       // console.log('结束查询品牌')
       if (data && data.length) {
@@ -67,8 +66,7 @@ const getMeeting = function (meeting) {
     // console.log('内存查询结果', meetingMaps[theme])
     return Promise.resolve(meetingMaps[theme]);
   } else {
-    return db
-    .query('SELECT * FROM meeting WHERE theme = ?', [theme])
+    return query('SELECT * FROM meeting WHERE theme = ?', [theme])
     .then(data => {
       // console.log('结束查询会议')
       if (data && data.length) {
@@ -132,8 +130,7 @@ function* genQueue (data) {
       row[13] = moment(new Date(1900, 0, row[13] - 1)).format('YYYY-MM-DD HH:mm:ss');
       row[14] = moment(new Date(1900, 0, row[14] - 1)).format('YYYY-MM-DD HH:mm:ss');
       row.push(logId);
-      return db
-      .query(sql.MEETING_RECORD_INSERT, row)
+      return query(sql.MEETING_RECORD_INSERT, row)
       .then((data) => {
         return data;
       })
@@ -180,8 +177,7 @@ const importExcel = function (data, gid) {
 const runQueue = function (queue) {
   let data = queue.next();
   if (data.done) {
-    return db
-    .query(sql.MEETING_RECORD_LIST + ' WHERE meeting_record.log_id = ?', [logId])
+    return query(sql.MEETING_RECORD_LIST + ' WHERE meeting_record.log_id = ?', [logId])
     .then(data => {
       return {
         code: 20000,
