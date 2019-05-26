@@ -61,13 +61,15 @@ router.use('/dashboard', function (req, res, next) {
     // 会议场数 覆盖医生 覆盖代表 参会总人数
     query('SELECT month(meeting_date) as month, count(*) as meetingCount, sum(attend_doctor_count) as doctorCount,sum(attend_director_count) as directorCount, sum(attend_wechat_doctors_count) as wechatDoctorCount FROM meeting_record as mr INNER JOIN meeting AS m ON m.id = mr.meeting_id '+ strCondition +' group by month(meeting_date);', conditionValues),
     // 医院数 平均观看时长
-    query('SELECT count(distinct doctor_hos) as countDoctorHospital, avg(stream_duration) as avgStreamDuration FROM meeting_record;'),
+    query('SELECT count(distinct doctor_hos) as countHospital, avg(stream_duration) as avgStreamDuration FROM meeting_record;'),
     // 大区根据总人数排序 参会医生 + 散会医生 + 参会代表
     query('SELECT sum(attend_doctor_count) as attendDoctorCount, sum(attend_wechat_doctors_count) as attendWechatDoctorsCount, sum(attend_director_count) as attendDirectorCount, sum(ifnull(attend_doctor_count,0) + ifnull(attend_wechat_doctors_count,0) + ifnull(attend_director_count,0)) as totalAttendCount, director_district FROM meeting_record '+ strCondition +' group by director_district order by totalAttendCount desc limit 0,20'),
     // 大区根据总人数排序 参会医生 + 散会医生 + 参会代表
     query('SELECT sum(attend_doctor_count) as attendDoctorCount, sum(attend_wechat_doctors_count) as attendWechatDoctorsCount, sum(attend_director_count) as attendDirectorCount, sum(ifnull(attend_doctor_count,0) + ifnull(attend_wechat_doctors_count,0) + ifnull(attend_director_count,0)) as totalAttendCount, doctor_province FROM meeting_record '+ strCondition +' group by doctor_province order by totalAttendCount desc limit 0,20'),
     // 大区根据总人数排序 参会医生 + 散会医生 + 参会代表
     query('SELECT sum(attend_doctor_count) as attendDoctorCount, sum(attend_wechat_doctors_count) as attendWechatDoctorsCount, sum(attend_director_count) as attendDirectorCount, sum(ifnull(attend_doctor_count,0) + ifnull(attend_wechat_doctors_count,0) + ifnull(attend_director_count,0)) as totalAttendCount, doctor_city FROM meeting_record '+ strCondition +' group by doctor_city order by totalAttendCount desc limit 0,20'),
+    // 科室分布
+    query('SELECT sum(ifnull(attend_doctor_count,0) + ifnull(attend_wechat_doctors_count,0) + ifnull(attend_director_count,0)) as deptAttendCount, doctor_dept FROM meeting_record '+ strCondition +' group by doctor_dept;')
   ])
   .then(data => {
     let bar = data[0];
@@ -76,12 +78,13 @@ router.use('/dashboard', function (req, res, next) {
       code: 20000,
       data: {
         bar,
-        countDoctorHospital: data[1][0].countDoctorHospital,
+        countHospital: data[1][0].countHospital,
         avgStreamDuration: data[1][0].avgStreamDuration,
         group: {
           district: data[2],
           province: data[3],
-          city: data[4]
+          city: data[4],
+          dept: data[5]
         }
       },
       meesage: '请求成功'

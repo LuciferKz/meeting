@@ -22,7 +22,7 @@
           <div class="card-panel-text">
             医院数
           </div>
-          <count-to :start-val="0" :end-val="data.sumHospital" :duration="3000" class="card-panel-num" />
+          <count-to :start-val="0" :end-val="data.countHospital" :duration="3000" class="card-panel-num" />
         </div>
       </div>
     </el-col>
@@ -59,11 +59,11 @@
 import CountTo from 'vue-count-to'
 
 export default {
-  props: {
-    data: Object
-  },
   components: {
     CountTo
+  },
+  props: {
+    data: Object
   },
   methods: {
     handleSetLineChartData(type) {

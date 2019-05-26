@@ -11,32 +11,37 @@
 
     <h4>覆盖医生数</h4>
     <el-row style="background:#fff;padding:16px 16px 0;margin-bottom:32px;">
-      <bar-chart v-if="showDoctors" :chart-data="chartData.doctors"/>
+      <bar-chart v-if="showDoctors" :chart-data="chartData.doctors" />
     </el-row>
 
     <h4>覆盖代表数</h4>
     <el-row style="background:#fff;padding:16px 16px 0;margin-bottom:32px;">
-      <bar-chart v-if="showDirectors" :chart-data="chartData.directors"/>
+      <bar-chart v-if="showDirectors" :chart-data="chartData.directors" />
     </el-row>
 
     <h4>参会总人数</h4>
     <el-row style="background:#fff;padding:16px 16px 0;margin-bottom:32px;">
-      <bar-chart v-if="showTotal" :chart-data="chartData.total"/>
+      <bar-chart v-if="showTotal" :chart-data="chartData.total" />
     </el-row>
 
     <h4>大区参会人数</h4>
     <el-row style="background:#fff;padding:16px 16px 0;margin-bottom:32px;">
-      <bar-chart v-if="showDistrictGroup" :chart-data="chartData.district"/>
+      <bar-chart v-if="showDistrictGroup" :chart-data="chartData.district" />
     </el-row>
 
     <h4>省份参会人数</h4>
     <el-row style="background:#fff;padding:16px 16px 0;margin-bottom:32px;">
-      <bar-chart v-if="showProvinceGroup" :chart-data="chartData.province"/>
+      <bar-chart v-if="showProvinceGroup" :chart-data="chartData.province" />
     </el-row>
 
     <h4>城市参会人数</h4>
     <el-row style="background:#fff;padding:16px 16px 0;margin-bottom:32px;">
-      <bar-chart v-if="showCityGroup" :chart-data="chartData.city"/>
+      <bar-chart v-if="showCityGroup" :chart-data="chartData.city" />
+    </el-row>
+
+    <h4>科室分布</h4>
+    <el-row style="background:#fff;padding:16px 16px 0;margin-bottom:32px;">
+      <bar-chart v-if="showDeptGroup" :chart-data="chartData.dept" />
     </el-row>
     <!-- <el-row style="background:#fff;padding:16px 16px 0;margin-bottom:32px;">
       <line-chart :chart-data="lineChartData" />
@@ -89,8 +94,8 @@ import { deepClone } from '@/utils'
 
 const months = new Array(12).fill('').map((v, i) => i + 1 + '月')
 
-const getSeries = function (name, option = {}) {
-  let series = {
+const getSeries = function(name, option = {}) {
+  const series = {
     name,
     type: 'bar',
     barWidth: option.barWidth || '60%',
@@ -208,6 +213,18 @@ const chartData = {
       data: ['参会医生数', '微信散点医生数', '参会代表数']
     }
   },
+  dept: {
+    xAxis: [{
+      type: 'category',
+      data: [],
+      axisTick: {
+        alignWithLabel: true
+      }
+    }],
+    legend: {
+      data: ['参会总人数']
+    }
+  }
 }
 
 export default {
@@ -231,7 +248,8 @@ export default {
       showTotal: false,
       showDistrictGroup: false,
       showProvinceGroup: false,
-      showCityGroup: false
+      showCityGroup: false,
+      showDeptGroup: false
     }
   },
   created() {
@@ -246,26 +264,26 @@ export default {
       fetchData()
         .then((res) => {
           console.log(res)
-          let data = res.data
-          let meetingsData = chartData.meetings.series[0].data
-          let attendDoctorCount = getSeries('参会医生数', { stack: 'count' })
-          let attendWechatDoctorCount = getSeries('微信散点医生数', { stack: 'count' })
-          let attendDirectorCount = getSeries('参会代表数', { stack: 'count' })
+          const data = res.data
+          const meetingsData = chartData.meetings.series[0].data
+          const attendDoctorCount = getSeries('参会医生数', { stack: 'count' })
+          const attendWechatDoctorCount = getSeries('微信散点医生数', { stack: 'count' })
+          const attendDirectorCount = getSeries('参会代表数', { stack: 'count' })
 
           let meetingCount = 0
           data.bar.forEach(d => {
             meetingCount += d.meetingCount
-            let index = d.month - 1
+            const index = d.month - 1
             this.$set(meetingsData, index, meetingCount)
             this.$set(attendDoctorCount.data, index, d.doctorCount)
             this.$set(attendWechatDoctorCount.data, index, d.wechatDoctorCount)
             this.$set(attendDirectorCount.data, index, d.directorCount)
           })
 
-          let dictDoctorCount = getSeries('参会医生数', { barWidth: '25%' })
-          let dictWechatDoctorCount = getSeries('微信散点医生数', { barWidth: '25%' })
-          let dictDirectorCount = getSeries('参会代表数', { barWidth: '25%' })
-          let districts = []
+          const dictDoctorCount = getSeries('参会医生数', { barWidth: '25%' })
+          const dictWechatDoctorCount = getSeries('微信散点医生数', { barWidth: '25%' })
+          const dictDirectorCount = getSeries('参会代表数', { barWidth: '25%' })
+          const districts = []
           data.group.district.forEach(d => {
             dictDoctorCount.data.push(d.attendDoctorCount)
             dictWechatDoctorCount.data.push(d.attendWechatDoctorsCount)
@@ -273,10 +291,10 @@ export default {
             districts.push(d.director_district)
           })
 
-          let povDoctorCount = getSeries('参会医生数', { stack: null, barWidth: '25%' })
-          let povWechatDoctorCount = getSeries('微信散点医生数', { stack: null, barWidth: '25%' })
-          let povDirectorCount = getSeries('参会代表数', { stack: null, barWidth: '25%' })
-          let provinces = []
+          const povDoctorCount = getSeries('参会医生数', { stack: null, barWidth: '25%' })
+          const povWechatDoctorCount = getSeries('微信散点医生数', { stack: null, barWidth: '25%' })
+          const povDirectorCount = getSeries('参会代表数', { stack: null, barWidth: '25%' })
+          const provinces = []
           data.group.province.forEach(d => {
             povDoctorCount.data.push(d.attendDoctorCount)
             povWechatDoctorCount.data.push(d.attendWechatDoctorsCount)
@@ -284,17 +302,23 @@ export default {
             provinces.push(d.doctor_province)
           })
 
-          let cityDoctorCount = getSeries('参会医生数', { stack: null, barWidth: '25%' })
-          let cityWechatDoctorCount = getSeries('微信散点医生数', { stack: null, barWidth: '25%' })
-          let cityDirectorCount = getSeries('参会代表数', { stack: null, barWidth: '25%' })
-          let cities = []
+          const cityDoctorCount = getSeries('参会医生数', { stack: null, barWidth: '25%' })
+          const cityWechatDoctorCount = getSeries('微信散点医生数', { stack: null, barWidth: '25%' })
+          const cityDirectorCount = getSeries('参会代表数', { stack: null, barWidth: '25%' })
+          const cities = []
           data.group.city.forEach(d => {
             cityDoctorCount.data.push(d.attendDoctorCount)
             cityWechatDoctorCount.data.push(d.attendWechatDoctorsCount)
             cityDirectorCount.data.push(d.attendDirectorCount)
             cities.push(d.doctor_city)
           })
-          console.log(cities)
+
+          const deptAttendCount = getSeries('参会总人数', { stack: null, barWidth: '25%' })
+          const depts = []
+          data.group.dept.forEach(d => {
+            deptAttendCount.data.push(d.deptAttendCount)
+            depts.push(d.doctor_dept)
+          })
 
           // 参会医生
           chartData.doctors.series = [attendDoctorCount, attendWechatDoctorCount]
@@ -315,6 +339,9 @@ export default {
           // 各个城市参会人数
           chartData.city.series = [cityDoctorCount, cityWechatDoctorCount, cityDirectorCount]
           chartData.city.xAxis[0].data = cities
+          // 科室分布
+          chartData.dept.series = [deptAttendCount]
+          chartData.dept.xAxis[0].data = depts
 
           this.showDoctors = true
           this.showDirectors = true
@@ -322,6 +349,7 @@ export default {
           this.showDistrictGroup = true
           this.showProvinceGroup = true
           this.showCityGroup = true
+          this.showDeptGroup = true
         })
     }
   }
