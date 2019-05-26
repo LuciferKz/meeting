@@ -281,14 +281,14 @@ export default {
   },
   created() {
     fetchBrandList()
-    .then(res => {
-      this.brandListOptions = res.data.items.map(brand => {
-        return {
-          value: brand.id,
-          label: brand.name
-        }
+      .then(res => {
+        this.brandListOptions = res.data.items.map(brand => {
+          return {
+            value: brand.id,
+            label: brand.name
+          }
+        })
       })
-    })
     this.getMeetings()
     this.getData()
   },
@@ -297,9 +297,8 @@ export default {
       'roles'
     ])
   },
-  mounted () {
+  mounted() {
     this.isAdmin = this.roles.includes('admin')
-    console.log(this.isAdmin)
   },
   methods: {
     handleSetChartData(type) {
@@ -308,14 +307,14 @@ export default {
 
     getMeetings() {
       fetchMeetingList({ page: 1, limit: 100, brandId: this.listQuery.brandId })
-      .then(res => {
-        this.meetingListOptions = res.data.items.map(m => {
-          return {
-            value: m.id,
-            label: m.theme
-          }
+        .then(res => {
+          this.meetingListOptions = res.data.items.map(m => {
+            return {
+              value: m.id,
+              label: m.theme
+            }
+          })
         })
-      })
     },
 
     getData() {
@@ -410,7 +409,7 @@ export default {
           this.showDeptGroup = true
         })
     },
-    
+
     handleFilter() {
       this.getData()
     }

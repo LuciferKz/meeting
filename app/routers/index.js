@@ -33,11 +33,12 @@ router.use('/dashboard', function (req, res, next) {
   let groupCondition = [];
   let conditionValues = [];
   let groupConditionValues = [];
-  if (params.brandId) {
+  let brandId = params.brandId || params.decoded.brand_id
+  if (brandId) {
     condition.push('find_in_set(?,brand_id)')
-    conditionValues.push(params.brandId)
+    conditionValues.push(brandId)
     groupCondition.push('find_in_set(?,brand_id)')
-    groupConditionValues.push(params.brandId)
+    groupConditionValues.push(brandId)
   }
   if (params.meetingId) {
     condition.push('meeting_id = ?')

@@ -86,10 +86,10 @@ export default {
           deleteUser({
             id: row.id
           })
-          .then(response => {
-            this.$message.success(response.message)
-            this.getList()
-          })
+            .then(response => {
+              this.$message.success(response.message)
+              this.getList()
+            })
         })
     }
   }
