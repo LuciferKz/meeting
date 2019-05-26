@@ -101,7 +101,7 @@ export default {
           }
         },
         legend,
-        series      
+        series
       })
     },
     initChart() {

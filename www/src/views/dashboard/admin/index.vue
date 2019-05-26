@@ -9,14 +9,15 @@
       <line-chart :chart-data="chartData.meetings" />
     </el-row>
 
+    <h4>覆盖医生数</h4>
+    <el-row style="background:#fff;padding:16px 16px 0;margin-bottom:32px;">
+      <bar-chart v-if="showDoctors" :chart-data="chartData.doctors"/>
+    </el-row>
+
     <!-- <el-row style="background:#fff;padding:16px 16px 0;margin-bottom:32px;">
       <line-chart :chart-data="lineChartData" />
     </el-row>
 
-    <el-row style="background:#fff;padding:16px 16px 0;margin-bottom:32px;">
-      <line-chart :chart-data="lineChartData" />
-    </el-row>
-    
     <el-row style="background:#fff;padding:16px 16px 0;margin-bottom:32px;">
       <line-chart :chart-data="lineChartData" />
     </el-row> -->
@@ -65,17 +66,21 @@ import { fetchData } from '@/api/dashboard'
 // import TodoList from './components/TodoList'
 // import BoxCard from './components/BoxCard'
 
+const months = new Array(12).fill('').map((v, i) => i + 1 + '月')
+
+const animationDuration = 6000
+
 const chartData = {
   meetings: {
     xAxis: {
-      data: new Array(12).fill('').map((v, i) => i + 1 + '月'),
+      data: months,
       boundaryGap: false,
       axisTick: {
         show: false
       }
     },
     series: [{
-      name: '会议场数', 
+      name: '会议场数',
       itemStyle: {
         normal: {
           color: '#FF005A',
@@ -95,9 +100,32 @@ const chartData = {
       data: ['会议场数']
     }
   },
-  messages: {
-    expectedData: [200, 192, 120, 144, 160, 130, 140],
-    actualData: [180, 160, 151, 106, 145, 150, 130]
+  doctors: {
+    xAxis: [{
+      type: 'category',
+      data: months,
+      axisTick: {
+        alignWithLabel: true
+      }
+    }],
+    series: [{
+      name: '参会医生数',
+      type: 'bar',
+      stack: 'vistors',
+      barWidth: '60%',
+      data: [],
+      animationDuration
+    }, {
+      name: '微信散点医生数',
+      type: 'bar',
+      stack: 'vistors',
+      barWidth: '60%',
+      data: [],
+      animationDuration
+    }],
+    legend: {
+      data: ['参会医生数', '微信散点医生数']
+    }
   },
   purchases: {
     expectedData: [80, 100, 121, 104, 105, 90, 100],
@@ -124,29 +152,40 @@ export default {
   },
   data() {
     return {
-      chartData
+      chartData,
+      showDoctors: false
     }
+  },
+  created() {
+    this.getData()
   },
   methods: {
     handleSetChartData(type) {
       this.chartData = chartData[type]
     },
 
-    getData () {
+    getData() {
       fetchData()
-      .then((res) => {
-        console.log(res)
-        let meetingsData = chartData.meetings.series[0].data
-        let meetingCount = 0
-        res.data.meetings.forEach(d => {
-          meetingCount += d.total
-          this.$set(meetingsData, d.meeting_month - 1, meetingCount)
+        .then((res) => {
+          console.log(res)
+          const meetingsData = chartData.meetings.series[0].data
+          const doctorsData = chartData.doctors.series
+          let meetingCount = 0
+          res.data.meetings.forEach(d => {
+            meetingCount += d.total
+            this.$set(meetingsData, d.month - 1, meetingCount)
+          })
+
+          let doctorCount = chartData.doctors.series[0].data
+          let wechatDoctorCount = chartData.doctors.series[1].data
+          res.data.doctors.forEach(d => {
+            this.$set(doctorCount, d.month - 1, d.doctorCount)
+            this.$set(wechatDoctorCount, d.month - 1, d.wechatDoctorCount)
+          })
+          this.showDoctors = true
+          console.log(doctorCount, wechatDoctorCount)
         })
-      })
     }
-  },
-  created () {
-    this.getData()
   }
 }
 </script>

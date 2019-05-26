@@ -117,20 +117,22 @@ function* genQueue (data) {
     })
     .then((meeting) => {
       // console.log('完成关联会议', meeting.id)
+      row.unshift(brandIds.join(','));
       row.unshift(meeting.id);
       
       let proms = [];
       brandIds.forEach(bid => {
         if (!relationMaps[`${bid}_${meeting.id}`]) {
+          relationMaps[`${bid}_${meeting.id}`] = 'pending'
           proms.push(createRelationBrandMeeting(bid, meeting.id));
         }
       })
       return proms.length ? Promise.all([proms]) : true;
     })
     .then(() => {
-      row[17] = null;
-      row[12] = moment(new Date(1900, 0, row[12] - 1)).format('YYYY-MM-DD HH:mm:ss');
+      row[18] = null;
       row[13] = moment(new Date(1900, 0, row[13] - 1)).format('YYYY-MM-DD HH:mm:ss');
+      row[14] = moment(new Date(1900, 0, row[14] - 1)).format('YYYY-MM-DD HH:mm:ss');
       row.push(logId);
       return db
       .query(sql.MEETING_RECORD_INSERT, row)
