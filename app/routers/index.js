@@ -7,6 +7,7 @@ const meeting = require('./meeting')
 const meetingRecord = require('./meeting-record')
 const log = require('./log')
 const handler = require('../handler')
+const initialDb = require('../db')
 
 router.use((req, res, next) => {
   if (req.url === '/user/login' || req.url === '/user/register') {
@@ -22,7 +23,25 @@ router.use('/meeting-record', meetingRecord)
 router.use('/brand', brand)
 router.use('/log', log)
 router.use('/dashboard', function (req, res, next) {
-  
+  let db = initialDb()
+  Promise
+  .all([
+    // 会议场数
+    db.query('SELECT month(meeting_date) as meeting_month, count(*) as total FROM test.meeting group by month(meeting_date);')
+  ])
+  .then(data => {
+    let meetings = data[0]
+    res.send({
+      code: 20000,
+      data: {
+        meetings
+      },
+      meesage: '请求成功'
+    })
+  })
+  .catch(err => {
+    throw err
+  })
 })
 
 module.exports = router
