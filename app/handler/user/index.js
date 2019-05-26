@@ -3,17 +3,17 @@ const crypto = require("crypto")
 const sql = require('../sql.js')
 const initializeDb = require('../../db')
 const moment = require('moment')
+const query = require('../../db/query')
 
 const secret = 'pingpaihuiyijilu'
 
 let db;
 
 const info = function (req, res) {
-  let db = initializeDb()
+  // let db = initializeDb()
   const params = req.query
   let username = params.decoded.username ? params.decoded.username : jwt.decode(params.token, secret).username
-  return db
-  .query(sql.USER_JOIN_BRAND + ' where `user`.username = ?', [username])
+  return query(sql.USER_JOIN_BRAND + ' where `user`.username = ?', [username])
   .then((data) => {
     if (data && data[0]) {
       delete data.password
@@ -29,31 +29,30 @@ const info = function (req, res) {
         message: '用户不存在'
       })
     }
-    db.end()
+    // db.end()
   })
 }
 
 const getUserByName = function (name) {
-  let db = initializeDb()
-  return db
-  .query(sql.USER_ALL + ' where `user`.username = ?', [name])
+  // let db = initializeDb()
+  return query(sql.USER_ALL + ' where `user`.username = ?', [name])
   .then(data => {
-    db.end()
+    // db.end()
     return data ? data[0] : null
   })
 }
 
 const getUsers = function (req, res) {
-  let db = initializeDb()
+  // let db = initializeDb()
   const params = req.query
   let page = parseInt(params.page) - 1
   let limit = parseInt(params.limit)
   return Promise.all([
-    db.query(sql.USER_LIST, [page*limit, limit]),
-    db.query(sql.COUNT_USER)
+    query(sql.USER_LIST, [page*limit, limit]),
+    query(sql.COUNT_USER)
   ])
   .then(data => {
-    db.end()
+    // db.end()
     res.send({
       code: 20000,
       data: {
@@ -70,7 +69,7 @@ const getUsers = function (req, res) {
 }
 
 const login = function (req, res) {
-  let db = initializeDb()
+  // let db = initializeDb()
   const params = req.body
   let username = params.username
   let password = params.password
@@ -96,7 +95,7 @@ const login = function (req, res) {
     } else {
       message = '账号不存在'
     }
-    db.end()
+    // db.end()
     res.send({ code, message, data: { token } })
   })
 }
@@ -109,7 +108,7 @@ const logout = function (req, res) {
 }
 
 const auth = function (req, res, next) {
-  let db = initializeDb()
+  // let db = initializeDb()
   let token = req.headers['x-token']
   let decoded = {}
   let code = 20000
@@ -131,7 +130,7 @@ const auth = function (req, res, next) {
     }
   }
   if (code !== 20000) {
-    db.end()
+    // db.end()
     res.send({
       code,
       message
@@ -144,7 +143,7 @@ const auth = function (req, res, next) {
 }
 
 const create = function (req, res) {
-  db = initializeDb()
+  // db = initializeDb()
   const params = req.body
   let username = params.username
   if (username.length < 6) {
@@ -172,11 +171,10 @@ const create = function (req, res) {
   let createDate = moment().format('YYYY-MM-DD HH:mm:ss');
   let updateDate = moment().format('YYYY-MM-DD HH:mm:ss')
 
-  return db
-  .query(sql.USER_INSERT, [username, newPwd, params.brandId, createDate, updateDate, avatar, roles, introduction])
+  return query(sql.USER_INSERT, [username, newPwd, params.brandId, createDate, updateDate, avatar, roles, introduction])
   .then(data => {
     if (data) {
-      db.end()
+      // db.end()
       res.send({
         code: 20000,
         data: {
@@ -197,8 +195,7 @@ const create = function (req, res) {
 
 const deleteUser = function (req, res) {
   const params = req.body
-  return db
-  .query('DELETE user WHERE id = ?', [params.id])
+  return query('DELETE user WHERE id = ?', [params.id])
   .then(data => {
     res.send({
       code: 20000,

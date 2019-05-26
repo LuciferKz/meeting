@@ -1,16 +1,17 @@
-const initializeDb = require('../../db')
-const sql = require('../sql')
+const initializeDb = require('../../db');
+const sql = require('../sql');
+const query = require('../../db/query');
 
 let db;
 
 const getBrands = function (req, res) {
-  db = initializeDb()
+  // db = initializeDb()
   return Promise.all([
-    db.query(sql.BRAND_ALL),
-    db.query(sql.COUNT_BRAND)
+    query(sql.BRAND_ALL),
+    query(sql.COUNT_BRAND)
   ])
   .then(data =>　{
-    db.end()
+    // db.end()
     res.send({
         code: 20000,
         data: {
