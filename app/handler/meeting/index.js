@@ -188,9 +188,8 @@ const getMeetings = function (req, res) {
   let page = parseInt(params.page) - 1
   let limit = parseInt(params.limit)
   let whereParams = []
-  let brandId = params.brandId || params.decoded.brand_id
+  let brandId = params.decoded.brand_id === 1 ? params.brandId : params.decoded.brand_id
 
-  let prom = Promise.resolve()
   if (brandId !== 1) {
     conditionQuery = ' FROM meeting, relation_brand_meeting WHERE meeting.id = relation_brand_meeting.meeting_id and relation_brand_meeting.brand_id = ?'
     conditionParams = [page*limit, limit]
