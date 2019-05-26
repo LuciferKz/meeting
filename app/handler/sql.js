@@ -5,7 +5,7 @@ module.exports = {
     LOG_ALL: 'SELECT * FROM upload_log',
     COUNT_LOG: 'SELECT count(*) as total FROM upload_log',
 
-    USER_INSERT: 'INSERT INTO user(username,password,brand_id,create_date,update_date,avatar,roles,introduction) Values(?,?,?,?,?,?,?,?)',
+    USER_INSERT: 'INSERT INTO user(username,password,brand_id,create_time,update_time,avatar,roles,introduction) Values(?,?,?,?,?,?,?,?)',
     USER_JOIN_BRAND: 'SELECT `user`.username, `user`.password, `user`.brand_id, `brand`.name as brandName, `user`.create_time, `user`.update_time, `user`.avatar, `user`.roles, `user`.introduction FROM user LEFT JOIN brand ON user.brand_id = brand.id',
     
     USER_ALL: 'SELECT * FROM user',

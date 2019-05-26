@@ -5,7 +5,7 @@
       <el-select v-model="listQuery.brandId" placeholder="品牌" clearable style="width: 180px" class="filter-item">
         <el-option v-for="item in brandListOptions" :key="item.value" :label="item.label" :value="item.value" />
       </el-select>
-      <el-select v-model="listQuery.brandId" placeholder="会议主题" clearable style="width: 180px" class="filter-item">
+      <el-select v-model="listQuery.meetingId" placeholder="会议主题" clearable style="width: 180px" class="filter-item">
         <el-option v-for="item in meetingListOptions" :key="item.value" :label="item.label" :value="item.value" />
       </el-select>
       <!-- <el-select v-model="listQuery.year" placeholder="Type" clearable class="filter-item" style="width: 130px">
@@ -269,7 +269,7 @@ export default {
       showDeptGroup: false,
       listQuery: {
         brandId: null,
-        theme: '',
+        meetingId: null,
         year: null,
         month: null
       },
@@ -393,6 +393,10 @@ export default {
           this.showCityGroup = true
           this.showDeptGroup = true
         })
+    },
+    
+    handleFilter() {
+      this.getData()
     }
   }
 }
