@@ -79,7 +79,7 @@ export const constantRoutes = [
         path: 'dashboard',
         component: () => import('@/views/dashboard/index'),
         name: 'Dashboard',
-        meta: { title: '首页', icon: 'dashboard', affix: true }
+        meta: { title: '首页', icon: 'dashboard', affix: true, roles: ['admin', 'editor'] }
       }
     ]
   },
@@ -185,7 +185,7 @@ export const asyncRoutes = [
       path: 'upload',
       name: 'MeetingUpload',
       component: () => import('@/views/meeting/upload'),
-      meta: { title: '会议上传' }
+      meta: { title: '会议上传', roles: ['admin'] }
     }, {
       path: ':id/meeting-records',
       name: 'MeetingRecords',
@@ -199,29 +199,29 @@ export const asyncRoutes = [
     component: Layout,
     redirect: '/user/list',
     name: 'User',
-    meta: { title: '用户管理', icon: 'peoples' },
+    meta: { title: '用户管理', icon: 'peoples', roles: ['admin'] },
     children: [{
       path: 'list',
       name: 'UserList',
       component: () => import('@/views/user/index'),
-      meta: { title: '用户列表' }
+      meta: { title: '用户列表', roles: ['admin'] }
     }, {
       path: 'create',
       name: 'UserCreate',
       component: () => import('@/views/user/create'),
-      meta: { title: '新增用户' }
+      meta: { title: '新增用户', roles: ['admin'] }
     }]
   },
   {
     path: '/log',
     component: Layout,
     name: 'Log',
-    meta: { title: '操作日志', icon: 'peoples' },
+    meta: { title: '操作日志', icon: 'peoples', roles: ['admin'] },
     children: [{
       path: 'list',
       name: 'LogList',
       component: () => import('@/views/log/index'),
-      meta: { title: '上传记录' }
+      meta: { title: '上传记录', roles: ['admin'] }
     }]
   },
   // {

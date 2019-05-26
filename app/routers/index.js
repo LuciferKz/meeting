@@ -21,5 +21,8 @@ router.use('/meeting', meeting)
 router.use('/meeting-record', meetingRecord)
 router.use('/brand', brand)
 router.use('/log', log)
+router.use('/dashboard', function (req, res, next) {
+  
+})
 
 module.exports = router

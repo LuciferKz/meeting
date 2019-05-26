@@ -54,6 +54,8 @@ const actions = {
           reject('Verification failed, please Login again.')
         }
 
+        data.roles = JSON.parse(data.roles)
+
         const { roles, name, avatar, introduction } = data
 
         // roles must be a non-empty array

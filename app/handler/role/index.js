@@ -1,10 +1,12 @@
-const db = require('../../db')
+const initializeDb = require('../../db')
 const routes = require('./routes')
 
 const fetchAll = function (req, res) {
+    let db = initializeDb()
     return db
     .query('select * from role')
     .then(data => {
+        db.end()
         res.send({
             code: 20000,
             data,

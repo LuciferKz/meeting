@@ -1,12 +1,15 @@
 const jwt = require('jwt-simple')
 const crypto = require("crypto")
 const sql = require('../sql.js')
-const db = require('../../db')
+const initializeDb = require('../../db')
 const moment = require('moment')
 
 const secret = 'pingpaihuiyijilu'
 
+let db;
+
 const info = function (req, res) {
+  let db = initializeDb()
   const params = req.query
   let username = params.decoded.username ? params.decoded.username : jwt.decode(params.token, secret).username
   return db
@@ -26,18 +29,22 @@ const info = function (req, res) {
         message: '用户不存在'
       })
     }
+    db.end()
   })
 }
 
 const getUserByName = function (name) {
+  let db = initializeDb()
   return db
   .query(sql.USER_ALL + ' where `user`.username = ?', [name])
   .then(data => {
+    db.end()
     return data ? data[0] : null
   })
 }
 
 const getUsers = function (req, res) {
+  let db = initializeDb()
   const params = req.query
   let page = parseInt(params.page) - 1
   let limit = parseInt(params.limit)
@@ -46,6 +53,7 @@ const getUsers = function (req, res) {
     db.query(sql.COUNT_USER)
   ])
   .then(data => {
+    db.end()
     res.send({
       code: 20000,
       data: {
@@ -55,9 +63,14 @@ const getUsers = function (req, res) {
       message: '获取成功'
     })
   })
+  .catch(err => {
+    console.log(err)
+    throw err
+  })
 }
 
 const login = function (req, res) {
+  let db = initializeDb()
   const params = req.body
   let username = params.username
   let password = params.password
@@ -75,6 +88,7 @@ const login = function (req, res) {
         message = '登录成功'
         // 2 * 60 * 60 * 1000
         const expires = 2 * 60 * 60 * 1000
+        // const expires = 60 * 1000
         token = jwt.encode({ username, brand_id: data.brand_id, roles: data.roles, expires: Date.now() + expires }, secret);
       } else {
         message = '密码错误'
@@ -82,7 +96,7 @@ const login = function (req, res) {
     } else {
       message = '账号不存在'
     }
-
+    db.end()
     res.send({ code, message, data: { token } })
   })
 }
@@ -95,6 +109,7 @@ const logout = function (req, res) {
 }
 
 const auth = function (req, res, next) {
+  let db = initializeDb()
   let token = req.headers['x-token']
   let decoded = {}
   let code = 20000
@@ -116,6 +131,7 @@ const auth = function (req, res, next) {
     }
   }
   if (code !== 20000) {
+    db.end()
     res.send({
       code,
       message
@@ -128,9 +144,10 @@ const auth = function (req, res, next) {
 }
 
 const create = function (req, res) {
+  db = initializeDb()
   const params = req.body
   let username = params.username
-  if (password.length) {
+  if (username.length < 6) {
     res.send({
       code: 20002,
       message: '用户名长度不能小于6'
@@ -138,7 +155,7 @@ const create = function (req, res) {
     return false
   }
   let password = params.password
-  if (password.length) {
+  if (password.length < 6) {
     res.send({
       code: 20002,
       message: '密码长度不能小于6'
@@ -147,10 +164,19 @@ const create = function (req, res) {
   }
   let md5 = crypto.createHash("md5")
   let newPwd = md5.update(password).digest("hex");
+
+
+  let avatar = 'https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif';
+  let roles = '[editor]';
+  let introduction = '品牌账号';
+  let createDate = moment().format('YYYY-MM-DD HH:mm:ss');
+  let updateDate = moment().format('YYYY-MM-DD HH:mm:ss')
+
   return db
-  .query(sql.USER_INSERT, [username, newPwd, params.brandId, moment().format('YYYY-MM-DD HH:MM:SS'), moment().format('YYYY-MM-DD HH:MM:SS')])
+  .query(sql.USER_INSERT, [username, newPwd, params.brandId, createDate, updateDate, avatar, roles, introduction])
   .then(data => {
     if (data) {
+      db.end()
       res.send({
         code: 20000,
         data: {

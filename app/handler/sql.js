@@ -5,10 +5,11 @@ module.exports = {
     LOG_ALL: 'SELECT * FROM upload_log',
     COUNT_LOG: 'SELECT count(*) as total FROM upload_log',
 
-    USER_INSERT: 'INSERT INTO user(username,password,brand_id,createAt,updateAt) Values(?,?,?,?,?)',
-    USER_JOIN_BRAND: 'SELECT `user`.username, `user`.password, `user`.brand_id, `brand`.name as brandName, `user`.createAt, `user`.updateAt, `user`.avatar, `user`.roles, `user`.introduction FROM user LEFT JOIN brand ON user.brand_id = brand.id',
+    USER_INSERT: 'INSERT INTO user(username,password,brand_id,create_date,update_date,avatar,roles,introduction) Values(?,?,?,?,?,?,?,?)',
+    USER_JOIN_BRAND: 'SELECT `user`.username, `user`.password, `user`.brand_id, `brand`.name as brandName, `user`.create_time, `user`.update_time, `user`.avatar, `user`.roles, `user`.introduction FROM user LEFT JOIN brand ON user.brand_id = brand.id',
+    
     USER_ALL: 'SELECT * FROM user',
-    USER_LIST: 'SELECT `user`.id, `user`.username, `brand`.name as brandName, `user`.createAt, `user`.updateAt FROM user LEFT JOIN brand ON user.brand_id = brand.id LIMIT ?,?',
+    USER_LIST: 'SELECT `user`.id, `user`.username, `brand`.name as brandName, `user`.create_time, `user`.update_time FROM user LEFT JOIN brand ON user.brand_id = brand.id LIMIT ?,?',
 
     // where name like '%,b' or name like 'b,%' or name like '%,b,%'
     MEETING_ALL: 'SELECT * FROM meeting',

@@ -21,13 +21,7 @@
 
       <el-table-column align="center" label="创建时间">
         <template slot-scope="scope">
-          <span>{{ scope.row.createAt }}</span>
-        </template>
-      </el-table-column>
-
-      <el-table-column align="center" label="更新时间">
-        <template slot-scope="scope">
-          <span>{{ scope.row.updateAt }}</span>
+          <span>{{ scope.row.create_time }}</span>
         </template>
       </el-table-column>
 

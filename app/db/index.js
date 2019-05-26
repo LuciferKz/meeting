@@ -1,6 +1,6 @@
 const mysql = require('mysql')
-let db;
-function handleError () {
+function initializeDb () {
+    let db;
     db = mysql.createConnection({
         user: 'root',
         password: '123456',
@@ -15,7 +15,7 @@ function handleError () {
     db.connect(function (err) {
         if (err) {
             console.log('error when connecting to db:', err);
-            setTimeout(handleError , 2000);
+            setTimeout(initializeDb , 2000);
         }
     })
 
@@ -23,7 +23,7 @@ function handleError () {
         console.log('db error', err);
         // 如果是连接断开，自动重新连接
         if (err.code === 'PROTOCOL_CONNECTION_LOST') {
-            handleError();
+            initializeDb();
         } else {
             throw err;
         }
@@ -43,13 +43,14 @@ function handleError () {
                 query.apply(db, args)
             })
             .catch(err => {
+                console.log('db query', err)
                 throw err;
             })
         } else {
             query.apply(db, args)
         }
     }
+    return db
 }
-handleError()
 
-module.exports = db
+module.exports = initializeDb

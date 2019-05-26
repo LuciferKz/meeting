@@ -1,11 +1,15 @@
-const db = require('../../db')
-const sql = require('../sql')
-const moment = require('moment')
+const initializeDb = require('../../db');
+const sql = require('../sql');
+const moment = require('moment');
+
+let db;
 
 const create = function (params) {
-    return db.query(sql.LOG_CREATE,[params.username, params.filename, 'upload', moment().format('YYYY-MM-DD HH:mm:ss')])
+    db = initializeDb()
+    return db.query(sql.LOG_CREATE,[params.username, params.filename, 'upload', moment().format('YYYY-MM-DD HH:mm:ss')]).then(() => { db.end() })
 }
 const fetchList = function (req, res) {
+    db = initializeDb()
     const params = req.query
     let page = parseInt(params.page) - 1
     let limit = parseInt(params.limit)
@@ -15,6 +19,7 @@ const fetchList = function (req, res) {
       db.query(sql.COUNT_LOG)
     ])
     .then(data =>　{
+      db.end()
       res.send({
           code: 20000,
           data: {
@@ -23,6 +28,10 @@ const fetchList = function (req, res) {
           },
           message: '获取成功'
       })
+    })
+    .catch(err => {
+      console.log(err)
+      throw err
     })
 }
 
