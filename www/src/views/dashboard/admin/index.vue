@@ -24,7 +24,7 @@
       <line-chart :chart-data="chartData.meetings" />
     </el-row>
 
-    <h4>覆盖医生数</h4>
+    <!-- <h4>覆盖医生数</h4>
     <el-row style="background:#fff;padding:16px 16px 0;margin-bottom:32px;">
       <bar-chart v-if="showDoctors" :chart-data="chartData.doctors" />
     </el-row>
@@ -32,24 +32,24 @@
     <h4>覆盖代表数</h4>
     <el-row style="background:#fff;padding:16px 16px 0;margin-bottom:32px;">
       <bar-chart v-if="showDirectors" :chart-data="chartData.directors" />
-    </el-row>
+    </el-row> -->
 
     <h4>参会总人数</h4>
     <el-row style="background:#fff;padding:16px 16px 0;margin-bottom:32px;">
       <bar-chart v-if="showTotal" :chart-data="chartData.total" />
     </el-row>
 
-    <h4>大区参会人数</h4>
+    <h4>大区参会情况</h4>
     <el-row style="background:#fff;padding:16px 16px 0;margin-bottom:32px;">
       <bar-chart v-if="showDistrictGroup" :chart-data="chartData.district" />
     </el-row>
 
-    <h4>省份参会人数</h4>
+    <h4>省份参会情况</h4>
     <el-row style="background:#fff;padding:16px 16px 0;margin-bottom:32px;">
       <bar-chart v-if="showProvinceGroup" :chart-data="chartData.province" />
     </el-row>
 
-    <h4>城市参会人数</h4>
+    <h4>城市参会情况</h4>
     <el-row style="background:#fff;padding:16px 16px 0;margin-bottom:32px;">
       <bar-chart v-if="showCityGroup" :chart-data="chartData.city" />
     </el-row>
@@ -340,12 +340,12 @@ export default {
           let meetingCount = 0
           data.countMeeting.forEach(d => {
             meetingCount += d.meetingCount
-            let index = d.month - 1
+            const index = d.month - 1
             this.$set(meetingsData, index, meetingCount)
           })
 
           data.bar.forEach(d => {
-            let index = d.month - 1
+            const index = d.month - 1
             this.$set(attendDoctorCount.data, index, d.doctorCount)
             this.$set(attendWechatDoctorCount.data, index, d.wechatDoctorCount)
             this.$set(attendDirectorCount.data, index, d.directorCount)
@@ -453,5 +453,6 @@ export default {
     padding: 16px 16px 0;
     margin-bottom: 32px;
   }
+  h4{font-size: 26px;}
 }
 </style>
