@@ -338,10 +338,14 @@ export default {
           const attendDirectorCount = getSeries('参会代表数', { stack: 'count' })
 
           let meetingCount = 0
-          data.bar.forEach(d => {
+          data.countMeeting.forEach(d => {
             meetingCount += d.meetingCount
-            const index = d.month - 1
+            let index = d.month - 1
             this.$set(meetingsData, index, meetingCount)
+          })
+
+          data.bar.forEach(d => {
+            let index = d.month - 1
             this.$set(attendDoctorCount.data, index, d.doctorCount)
             this.$set(attendWechatDoctorCount.data, index, d.wechatDoctorCount)
             this.$set(attendDirectorCount.data, index, d.directorCount)

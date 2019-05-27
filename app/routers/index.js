@@ -62,8 +62,9 @@ router.use('/dashboard', function (req, res, next) {
 
   Promise
   .all([
+    query('SELECT month(meeting_date) as month, count(*) as meetingCount FROM meeting '+ strCondition +' group by month(meeting_date);', conditionValues),
     // 会议场数 覆盖医生 覆盖代表 参会总人数
-    query('SELECT month(meeting_date) as month, count(*) as meetingCount, sum(attend_doctor_count) as doctorCount,sum(attend_director_count) as directorCount, sum(attend_wechat_doctors_count) as wechatDoctorCount FROM meeting_record as mr INNER JOIN meeting AS m ON m.id = mr.meeting_id '+ strCondition +' group by month(meeting_date);', conditionValues),
+    query('SELECT month(meeting_date) as month, sum(attend_doctor_count) as doctorCount, sum(attend_director_count) as directorCount, sum(attend_wechat_doctors_count) as wechatDoctorCount FROM meeting_record as mr INNER JOIN meeting AS m ON m.id = mr.meeting_id '+ strCondition +' group by month(meeting_date);', conditionValues),
     // 医院数 平均观看时长
     query('SELECT count(distinct doctor_hos) as countHospital, avg(stream_duration) as avgStreamDuration FROM meeting_record '+ groupStrCondition +';', groupConditionValues),
     // 大区根据总人数排序 参会医生 + 散会医生 + 参会代表
@@ -76,19 +77,19 @@ router.use('/dashboard', function (req, res, next) {
     query('SELECT sum(ifnull(attend_doctor_count,0) + ifnull(attend_wechat_doctors_count,0) + ifnull(attend_director_count,0)) as deptAttendCount, doctor_dept FROM meeting_record '+ groupStrCondition +' group by doctor_dept;', groupConditionValues)
   ])
   .then(data => {
-    let bar = data[0];
     // db.end();
     res.send({
       code: 20000,
       data: {
-        bar,
-        countHospital: data[1][0].countHospital,
-        avgStreamDuration: data[1][0].avgStreamDuration,
+        countMeeting: data[0],
+        bar: data[1],
+        countHospital: data[2][0].countHospital,
+        avgStreamDuration: data[2][0].avgStreamDuration,
         group: {
-          district: data[2],
-          province: data[3],
-          city: data[4],
-          dept: data[5]
+          district: data[3],
+          province: data[4],
+          city: data[5],
+          dept: data[6]
         }
       },
       meesage: '请求成功'
