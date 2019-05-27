@@ -10,12 +10,14 @@
       </el-select>
       <el-date-picker
         v-model="listQuery.year"
+        class="picker"
         type="year"
         placeholder="选择年"
         value-format="yyyy">
       </el-date-picker>
       <el-date-picker
         v-model="listQuery.month"
+        class="picker"
         type="month"
         placeholder="选择月"
         value-format="MM">
@@ -478,5 +480,8 @@ export default {
     margin-bottom: 32px;
   }
   h4{font-size: 26px;}
+  .picker{
+    vertical-align: top;
+  }
 }
 </style>
