@@ -219,6 +219,8 @@ const chartData = {
   },
   avgStreamDuration: 0,
   countHospital: 0,
+  countDoctors: 0,
+  countDirectors: 0,
   district: {
     xAxis: [{
       type: 'category',
@@ -352,7 +354,6 @@ export default {
       this.showDeptGroup = false
       fetchData(this.listQuery)
         .then((res) => {
-          console.log(res)
           const data = res.data
           const meetingsData = chartData.meetings.series[0].data
           const attendDoctorCount = getSeries('参会医生数', { stack: 'count' })
@@ -365,9 +366,12 @@ export default {
             const index = d.month - 1
             this.$set(meetingsData, index, meetingCount)
           })
-
+          chartData.countDoctors = 0
+          chartData.countDirectors = 0
           data.bar.forEach(d => {
             const index = d.month - 1
+            chartData.countDoctors += d.doctorCount + d.wechatDoctorCount
+            chartData.countDirectors += d.directorCount
             this.$set(attendDoctorCount.data, index, d.doctorCount)
             this.$set(attendWechatDoctorCount.data, index, d.wechatDoctorCount)
             this.$set(attendDirectorCount.data, index, d.directorCount)
@@ -376,9 +380,9 @@ export default {
           attendDoctorCount.itemStyle.normal.label.position = 'insideTop'
           attendWechatDoctorCount.itemStyle.normal.label.position = 'insideTop'
           attendDirectorCount.itemStyle.normal.label.position = 'insideTop'
-          attendDoctorCount.itemStyle.normal.color ='#6f90e9'
-          attendWechatDoctorCount.itemStyle.normal.color ='#7fd2f5'
-          attendDirectorCount.itemStyle.normal.color ='#e1c39e'
+          attendDoctorCount.itemStyle.normal.color = '#6f90e9'
+          attendWechatDoctorCount.itemStyle.normal.color = '#7fd2f5'
+          attendDirectorCount.itemStyle.normal.color = '#e1c39e'
 
           const dictDoctorCount = getSeries('参会医生数', { barWidth: '25%' })
           const dictWechatDoctorCount = getSeries('微信散点医生数', { barWidth: '25%' })
@@ -390,7 +394,6 @@ export default {
             dictDirectorCount.data.push(d.attendDirectorCount)
             districts.push(d.director_district === null ? '其他' : d.director_district)
           })
-
 
           const povDoctorCount = getSeries('参会医生数', { stack: null, barWidth: '25%' })
           const povWechatDoctorCount = getSeries('微信散点医生数', { stack: null, barWidth: '25%' })

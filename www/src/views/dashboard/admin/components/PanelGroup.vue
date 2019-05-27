@@ -9,7 +9,7 @@
           <div class="card-panel-text">
             平均观看时长
           </div>
-          <count-to :start-val="0" :end-val="data.avgStreamDuration" :duration="2600" suffix="分钟" class="card-panel-num" />
+          <count-to :start-val="0" :end-val="data.avgStreamDuration" :duration="2000" suffix="分钟" class="card-panel-num" />
         </div>
       </div>
     </el-col>
@@ -22,7 +22,7 @@
           <div class="card-panel-text">
             医院数
           </div>
-          <count-to :start-val="0" :end-val="data.countHospital" :duration="3000" class="card-panel-num" />
+          <count-to :start-val="0" :end-val="data.countHospital" :duration="2200" class="card-panel-num" />
         </div>
       </div>
     </el-col>
@@ -35,7 +35,7 @@
           <div class="card-panel-text">
             覆盖医生
           </div>
-          <count-to :start-val="0" :end-val="9280" :duration="3200" class="card-panel-num" />
+          <count-to :start-val="0" :end-val="data.countDoctors" :duration="2400" class="card-panel-num" />
         </div>
       </div>
     </el-col>
@@ -48,7 +48,7 @@
           <div class="card-panel-text">
             覆盖代表
           </div>
-          <count-to :start-val="0" :end-val="13600" :duration="3600" class="card-panel-num" />
+          <count-to :start-val="0" :end-val="data.countDirectors" :duration="2600" class="card-panel-num" />
         </div>
       </div>
     </el-col>
