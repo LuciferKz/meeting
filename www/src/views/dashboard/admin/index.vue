@@ -118,7 +118,14 @@ const getSeries = function(name, option = {}) {
     type: 'bar',
     barWidth: option.barWidth || '60%',
     data: [],
-    animationDuration: 3000
+    animationDuration: 3000,
+    itemStyle: {
+      normal: {
+        label : {
+            show: true, position: 'insideTop'
+        }
+      }
+    }
   }
   if (option.stack) series.stack = option.stack
   return series
@@ -141,6 +148,9 @@ const chartData = {
           lineStyle: {
             color: '#FF005A',
             width: 2
+          },
+          label : {
+            show: true
           }
         }
       },
@@ -345,7 +355,7 @@ export default {
             dictDoctorCount.data.push(d.attendDoctorCount)
             dictWechatDoctorCount.data.push(d.attendWechatDoctorsCount)
             dictDirectorCount.data.push(d.attendDirectorCount)
-            districts.push(d.director_district)
+            districts.push(d.director_district === null ? '其他' : d.director_district)
           })
 
           const povDoctorCount = getSeries('参会医生数', { stack: null, barWidth: '25%' })
@@ -356,7 +366,7 @@ export default {
             povDoctorCount.data.push(d.attendDoctorCount)
             povWechatDoctorCount.data.push(d.attendWechatDoctorsCount)
             povDirectorCount.data.push(d.attendDirectorCount)
-            provinces.push(d.doctor_province)
+            provinces.push(d.doctor_province === null ? '其他' : d.doctor_province)
           })
 
           const cityDoctorCount = getSeries('参会医生数', { stack: null, barWidth: '25%' })
@@ -367,14 +377,14 @@ export default {
             cityDoctorCount.data.push(d.attendDoctorCount)
             cityWechatDoctorCount.data.push(d.attendWechatDoctorsCount)
             cityDirectorCount.data.push(d.attendDirectorCount)
-            cities.push(d.doctor_city)
+            cities.push(d.doctor_city === null ? '其他' : d.doctor_city)
           })
 
           const deptAttendCount = getSeries('参会总人数', { stack: null, barWidth: '25%' })
           const depts = []
           data.group.dept.forEach(d => {
             deptAttendCount.data.push(d.deptAttendCount)
-            depts.push(d.doctor_dept)
+            depts.push(d.doctor_dept === null ? '其他' : d.doctor_dept)
           })
 
           // 参会医生
