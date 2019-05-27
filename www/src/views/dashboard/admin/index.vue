@@ -12,14 +12,14 @@
         v-model="listQuery.year"
         type="year"
         placeholder="选择年"
-        value-format="yyyy">
-      </el-date-picker>
+        value-format="yyyy"
+      />
       <el-date-picker
         v-model="listQuery.month"
         type="month"
         placeholder="选择月"
-        value-format="MM">
-      </el-date-picker>
+        value-format="MM"
+      />
       <!-- <el-select v-model="listQuery.year" placeholder="Type" clearable class="filter-item" style="width: 130px">
         <el-option v-for="item in calendarTypeOptions" :key="item.key" :label="item.display_name+'('+item.key+')'" :value="item.key" />
       </el-select>
@@ -293,8 +293,8 @@ export default {
       listQuery: {
         brandId: null,
         meetingId: null,
-        year: null,
-        month: null
+        year: new Date().getFullYear().toString(),
+        month: (new Date().getMonth() + 1).toString()
       },
       brandListOptions: [],
       meetingListOptions: [],
@@ -320,6 +320,7 @@ export default {
     ])
   },
   mounted() {
+    console.log(this.listQuery)
     this.isAdmin = this.roles.includes('admin')
   },
   methods: {
