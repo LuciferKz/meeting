@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
     <el-table v-loading="listLoading" :data="list" border fit highlight-current-row style="width: 100%">
-      <el-table-column align="center" label="月份" width="150">
+      <el-table-column align="center" label="月份" width="100">
         <template slot-scope="scope">
           <span>{{ scope.row.meeting_date.split('-')[1] }}</span>
         </template>
