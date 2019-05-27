@@ -8,6 +8,18 @@
       <el-select v-model="listQuery.meetingId" placeholder="会议主题" clearable style="width: 180px" class="filter-item">
         <el-option v-for="item in meetingListOptions" :key="item.value" :label="item.label" :value="item.value" />
       </el-select>
+      <el-date-picker
+        v-model="listQuery.year"
+        type="year"
+        placeholder="选择年"
+        value-format="yyyy">
+      </el-date-picker>
+      <el-date-picker
+        v-model="listQuery.month"
+        type="month"
+        placeholder="选择月"
+        value-format="MM">
+      </el-date-picker>
       <!-- <el-select v-model="listQuery.year" placeholder="Type" clearable class="filter-item" style="width: 130px">
         <el-option v-for="item in calendarTypeOptions" :key="item.key" :label="item.display_name+'('+item.key+')'" :value="item.key" />
       </el-select>

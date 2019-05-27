@@ -1,7 +1,7 @@
-const initializeDb = require('./index')
+const connect = require('./index')
 
 const query = function () {
-    let db = initializeDb()
+    let db = connect()
     let args = Array.from(arguments)
     let last = args[args.length - 1]
     if (typeof last !== 'function') {
