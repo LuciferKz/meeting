@@ -343,6 +343,13 @@ export default {
     },
 
     getData() {
+      this.showDoctors = false
+      this.showDirectors = false
+      this.showTotal = false
+      this.showDistrictGroup = false
+      this.showProvinceGroup = false
+      this.showCityGroup = false
+      this.showDeptGroup = false
       fetchData(this.listQuery)
         .then((res) => {
           console.log(res)
@@ -376,9 +383,6 @@ export default {
           const dictDoctorCount = getSeries('参会医生数', { barWidth: '25%' })
           const dictWechatDoctorCount = getSeries('微信散点医生数', { barWidth: '25%' })
           const dictDirectorCount = getSeries('参会代表数', { barWidth: '25%' })
-          dictDoctorCount.itemStyle.normal.label.position = 'top'
-          dictWechatDoctorCount.itemStyle.normal.label.position = 'top'
-          dictDirectorCount.itemStyle.normal.label.position = 'top'
           const districts = []
           data.group.district.forEach(d => {
             dictDoctorCount.data.push(d.attendDoctorCount)
@@ -386,6 +390,7 @@ export default {
             dictDirectorCount.data.push(d.attendDirectorCount)
             districts.push(d.director_district === null ? '其他' : d.director_district)
           })
+
 
           const povDoctorCount = getSeries('参会医生数', { stack: null, barWidth: '25%' })
           const povWechatDoctorCount = getSeries('微信散点医生数', { stack: null, barWidth: '25%' })
@@ -435,6 +440,7 @@ export default {
           // 各个大区参会人数
           chartData.district.series = [dictDoctorCount, dictWechatDoctorCount, dictDirectorCount]
           chartData.district.xAxis[0].data = districts
+          console.log(chartData.district)
           // 各个省份参会人数
           chartData.province.series = [povDoctorCount, povWechatDoctorCount, povDirectorCount]
           chartData.province.xAxis[0].data = provinces

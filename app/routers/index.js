@@ -29,7 +29,7 @@ const getMeetingCountSql = function (brandId, meetingId, year) {
   let values = [];
   let conditions = [];
   let str = '';
-  str += 'SELECT count(*) ';
+  str += 'SELECT count(*) as meetingCount, month(m.meeting_date) as month ';
   str += 'FROM meeting as m , relation_brand_meeting as rbm';
   if (brandId || meetingId || year) {
     str += ' WHERE ';
@@ -264,8 +264,6 @@ router.use('/dashboard', function (req, res, next) {
   let meetingId = params.meetingId
   let year = params.year ? params.year : new Date().getFullYear()
   let month = params.month ? params.month : new Date().getMonth() + 1
-
-  console.log(brandId, meetingId, year, month)
   
   const meetingCount = getMeetingCountSql(brandId, meetingId, year)
   const totalCount = getTotalCount(brandId, meetingId, year)
