@@ -121,8 +121,8 @@ const getSeries = function(name, option = {}) {
     animationDuration: 3000,
     itemStyle: {
       normal: {
-        label : {
-            show: true, position: 'insideTop'
+        label: {
+          show: true
         }
       }
     }
@@ -149,7 +149,7 @@ const chartData = {
             color: '#FF005A',
             width: 2
           },
-          label : {
+          label: {
             show: true
           }
         }
@@ -346,6 +346,10 @@ export default {
             this.$set(attendWechatDoctorCount.data, index, d.wechatDoctorCount)
             this.$set(attendDirectorCount.data, index, d.directorCount)
           })
+
+          attendDoctorCount.itemStyle.normal.label.position = 'insideTop'
+          attendWechatDoctorCount.itemStyle.normal.label.position = 'insideTop'
+          attendDirectorCount.itemStyle.normal.label.position = 'insideTop'
 
           const dictDoctorCount = getSeries('参会医生数', { barWidth: '25%' })
           const dictWechatDoctorCount = getSeries('微信散点医生数', { barWidth: '25%' })

@@ -137,6 +137,7 @@ function* genQueue (data) {
 }
 
 const importExcel = function (data, gid) {
+  // let sliceData = data.splice(0, 1000);
   const result = checkData(data)
   if (result.code !== 20000) {
     return Promise.resolve(result)
@@ -155,6 +156,9 @@ const importExcel = function (data, gid) {
       brandMaps[b.name] = b
     })
 
+    // if (data.length > 0) {
+    //   importExcel()
+    // }
     const queue = genQueue(result.data)
     return runQueue(queue)
   })
