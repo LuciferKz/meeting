@@ -1,5 +1,5 @@
 const mysql = require('mysql')
-function initializeDb () {
+function connect () {
     let db;
     db = mysql.createConnection({
         user: 'root',
@@ -31,4 +31,4 @@ function initializeDb () {
     return db
 }
 
-module.exports = initializeDb
+module.exports = connect

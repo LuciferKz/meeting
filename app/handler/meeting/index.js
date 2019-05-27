@@ -3,14 +3,15 @@ const moment = require('moment');
 const formidable = require('formidable');
 const xlsx = require('node-xlsx');
 const fs = require('fs');
-const query = require('../../db/query');
+const initialize = require('../../db/initialize');
 
 let meetingMaps = {};
 let brandMaps = {};
 let logId = null;
+let db;
 
 const createRelationBrandMeeting = function (brandId, meetingId) {
-  return query('INSERT IGNORE INTO relation_brand_meeting (brand_id,meeting_id,relation_key) VALUES (?,?,?)', [brandId, meetingId, `${brandId}_${meetingId}`])
+  return db.query('INSERT IGNORE INTO relation_brand_meeting (brand_id,meeting_id,relation_key) VALUES (?,?,?)', [brandId, meetingId, `${brandId}_${meetingId}`])
   .then(data => {
     return { id: data.insertId };
   })
@@ -18,7 +19,7 @@ const createRelationBrandMeeting = function (brandId, meetingId) {
 
 const createBrand = function (name) {
   // console.log('开始创建品牌', name)
-  return query('INSERT INTO brand ( name ) VALUES (?)', [name])
+  return db.query('INSERT INTO brand ( name ) VALUES (?)', [name])
   .then(data => {
     // console.log('结束创建品牌', data)
     brandMaps[name] = { id: data.insertId };
@@ -32,7 +33,7 @@ const getBrand = function (name) {
     // console.log('内存查询结果', brandMaps[name])
     return Promise.resolve(brandMaps[name]);
   } else {
-    return query('SELECT * FROM brand WHERE name = ?', [name])
+    return db.query('SELECT * FROM brand WHERE name = ?', [name])
     .then(data => {
       // console.log('结束查询品牌')
       if (data && data.length) {
@@ -47,7 +48,7 @@ const getBrand = function (name) {
 const createMeeting = function (meeting) {
   // console.log('开始创建会议', meeting[3])
   const [month, meeting_date, meeting_time, theme, brands, type, founder] = meeting;
-  return query('INSERT INTO meeting (theme, brands, type, founder, meeting_date, meeting_time) VALUES (?,?,?,?,?,?)', [theme, brands, type, founder, meeting_date, meeting_time])
+  return db.query('INSERT INTO meeting (theme, brands, type, founder, meeting_date, meeting_time) VALUES (?,?,?,?,?,?)', [theme, brands, type, founder, meeting_date, meeting_time])
   .then(data => {
     // console.log('结束创建会议信息', data)
     meetingMaps[theme] = { id: data.insertId };
@@ -62,7 +63,7 @@ const getMeeting = function (meeting) {
     // console.log('内存查询结果', meetingMaps[theme])
     return Promise.resolve(meetingMaps[theme]);
   } else {
-    return query('SELECT * FROM meeting WHERE theme = ?', [theme])
+    return db.query('SELECT * FROM meeting WHERE theme = ?', [theme])
     .then(data => {
       // console.log('结束查询会议')
       if (data && data.length) {
@@ -123,7 +124,7 @@ function* genQueue (data) {
       row[13] = moment(new Date(1900, 0, row[13] - 1)).format('YYYY-MM-DD HH:mm:ss');
       row[14] = moment(new Date(1900, 0, row[14] - 1)).format('YYYY-MM-DD HH:mm:ss');
       row.push(logId);
-      return query(sql.MEETING_RECORD_INSERT, row)
+      return db.query(sql.MEETING_RECORD_INSERT, row)
       .then((data) => {
         return data;
       })
@@ -144,9 +145,9 @@ const importExcel = function (data, gid) {
   }
   logId = gid
   return Promise.all([
-    query(sql.MEETING_ALL),
-    query(sql.BRAND_ALL),
-    query(sql.RELATION_BRAND_MEETING_ALL),
+    db.query(sql.MEETING_ALL),
+    db.query(sql.BRAND_ALL),
+    db.query(sql.RELATION_BRAND_MEETING_ALL),
   ])
   .then(res => {
     res[0].forEach((m) => {
@@ -171,7 +172,7 @@ const importExcel = function (data, gid) {
 const runQueue = function (queue) {
   let data = queue.next();
   if (data.done) {
-    return query(sql.MEETING_RECORD_LIST + ' WHERE meeting_record.log_id = ?', [logId])
+    return db.query(sql.MEETING_RECORD_LIST + ' WHERE meeting_record.log_id = ?', [logId])
     .then(data => {
       return {
         code: 20000,
@@ -187,7 +188,7 @@ const runQueue = function (queue) {
 }
 
 const getMeetings = function (req, res) {
-  // db = initializeDb()
+  db = initialize()
   let params = req.query
   let page = parseInt(params.page) - 1
   let limit = parseInt(params.limit)
@@ -204,13 +205,13 @@ const getMeetings = function (req, res) {
   }
 
   return Promise.all([
-    query('SELECT meeting.id as id, meeting.brands, meeting.theme, meeting.meeting_time, meeting.meeting_date, meeting.type, meeting.founder' + conditionQuery + ' LIMIT ?,?', [...whereParams, page*limit, limit]),
-    query('SELECT count(*) as total' + conditionQuery, [...whereParams])
+    db.query('SELECT meeting.id as id, meeting.brands, meeting.theme, meeting.meeting_time, meeting.meeting_date, meeting.type, meeting.founder' + conditionQuery + ' LIMIT ?,?', [...whereParams, page*limit, limit]),
+    db.query('SELECT count(*) as total' + conditionQuery, [...whereParams])
   ])
   .then(data => {
     let meetings = data[0];
     let total = data[1][0].total;
-    // db.end()
+    db.end()
     res.send({
       code: 20000,
       data: {
@@ -227,7 +228,7 @@ const getMeetings = function (req, res) {
 }
 
 const upload = function (req, res) {
-  // db = initializeDb()
+  db = initialize()
   const form = new formidable.IncomingForm()
   form.parse(req,function(err, fields, files){
     const sheets = xlsx.parse(fs.readFileSync(files.file.path))
@@ -236,16 +237,16 @@ const upload = function (req, res) {
       username: req.body.decoded.username,
       filename: files.file.name
     }
-    query(sql.LOG_CREATE,[params.username, params.filename, 'upload', moment().format('YYYY-MM-DD HH:mm:ss')])
+    db.query(sql.LOG_CREATE,[params.username, params.filename, 'upload', moment().format('YYYY-MM-DD HH:mm:ss')])
     .then((log) => {
       if (log) {
         importExcel(sheets[0].data, log.insertId)
         .then((data) => {
-          // db.end()
+          db.end()
           res.send(data)
         })
       } else {
-        // db.end()
+        db.end()
         res.send({
           code: 20002,
           message: '日志生成失败'
