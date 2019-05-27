@@ -76,7 +76,7 @@ export default {
         })
         .then(() => {
           const formData = new FormData()
-          formData.append('file', rawFile, 'temp.xlsx')
+          formData.append('file', rawFile)
           uploadMeeting(formData)
             .then(res => {
               this.$message.success('上传成功')
