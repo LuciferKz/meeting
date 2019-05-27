@@ -387,6 +387,9 @@ export default {
           const dictDoctorCount = getSeries('参会医生数', { barWidth: '25%' })
           const dictWechatDoctorCount = getSeries('微信散点医生数', { barWidth: '25%' })
           const dictDirectorCount = getSeries('参会代表数', { barWidth: '25%' })
+          dictDoctorCount.itemStyle.normal.label.position = 'top'
+          dictWechatDoctorCount.itemStyle.normal.label.position = 'top'
+          dictDirectorCount.itemStyle.normal.label.position = 'top'
           const districts = []
           data.group.district.forEach(d => {
             dictDoctorCount.data.push(d.attendDoctorCount)
