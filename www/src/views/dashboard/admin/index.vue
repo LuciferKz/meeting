@@ -144,9 +144,9 @@ const chartData = {
       name: '会议场数',
       itemStyle: {
         normal: {
-          color: '#FF005A',
+          color: '#32e1ed',
           lineStyle: {
-            color: '#FF005A',
+            color: '#32e1ed',
             width: 2
           },
           label: {
@@ -354,10 +354,16 @@ export default {
           attendDoctorCount.itemStyle.normal.label.position = 'insideTop'
           attendWechatDoctorCount.itemStyle.normal.label.position = 'insideTop'
           attendDirectorCount.itemStyle.normal.label.position = 'insideTop'
+          attendDoctorCount.itemStyle.normal.color ='#6f90e9'
+          attendWechatDoctorCount.itemStyle.normal.color ='#7fd2f5'
+          attendDirectorCount.itemStyle.normal.color ='#e1c39e'
 
           const dictDoctorCount = getSeries('参会医生数', { barWidth: '25%' })
           const dictWechatDoctorCount = getSeries('微信散点医生数', { barWidth: '25%' })
           const dictDirectorCount = getSeries('参会代表数', { barWidth: '25%' })
+          dictDoctorCount.itemStyle.normal.label.position = 'top'
+          dictWechatDoctorCount.itemStyle.normal.label.position = 'top'
+          dictDirectorCount.itemStyle.normal.label.position = 'top'
           const districts = []
           data.group.district.forEach(d => {
             dictDoctorCount.data.push(d.attendDoctorCount)
@@ -369,6 +375,9 @@ export default {
           const povDoctorCount = getSeries('参会医生数', { stack: null, barWidth: '25%' })
           const povWechatDoctorCount = getSeries('微信散点医生数', { stack: null, barWidth: '25%' })
           const povDirectorCount = getSeries('参会代表数', { stack: null, barWidth: '25%' })
+          povDoctorCount.itemStyle.normal.label.position = 'top'
+          povWechatDoctorCount.itemStyle.normal.label.position = 'top'
+          povDirectorCount.itemStyle.normal.label.position = 'top'
           const provinces = []
           data.group.province.forEach(d => {
             povDoctorCount.data.push(d.attendDoctorCount)
@@ -380,6 +389,9 @@ export default {
           const cityDoctorCount = getSeries('参会医生数', { stack: null, barWidth: '25%' })
           const cityWechatDoctorCount = getSeries('微信散点医生数', { stack: null, barWidth: '25%' })
           const cityDirectorCount = getSeries('参会代表数', { stack: null, barWidth: '25%' })
+          cityDoctorCount.itemStyle.normal.label.position = 'top'
+          cityWechatDoctorCount.itemStyle.normal.label.position = 'top'
+          cityDirectorCount.itemStyle.normal.label.position = 'top'
           const cities = []
           data.group.city.forEach(d => {
             cityDoctorCount.data.push(d.attendDoctorCount)
