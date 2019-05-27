@@ -205,7 +205,7 @@ const getMeetings = function (req, res) {
   }
 
   return Promise.all([
-    db.query('SELECT meeting.id as id, meeting.brands, meeting.theme, meeting.meeting_time, meeting.meeting_date, meeting.type, meeting.founder' + conditionQuery + ' LIMIT ?,?', [...whereParams, page*limit, limit]),
+    db.query('SELECT meeting.id as id, meeting.brands, meeting.theme, meeting.meeting_time, meeting.meeting_date, meeting.type, meeting.founder' + conditionQuery + ' ORDER BY meeting.meeting_date desc LIMIT ?,?', [...whereParams, page*limit, limit]),
     db.query('SELECT count(*) as total' + conditionQuery, [...whereParams])
   ])
   .then(data => {
