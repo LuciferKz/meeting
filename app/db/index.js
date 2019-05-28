@@ -15,7 +15,7 @@ function connect () {
     db.connect(function (err) {
         if (err) {
             console.log('error when connecting to db:', err);
-            setTimeout(initializeDb , 2000);
+            setTimeout(connect , 2000);
         }
     })
 
@@ -23,7 +23,7 @@ function connect () {
         console.log('db error', err);
         // 如果是连接断开，自动重新连接
         if (err.code === 'PROTOCOL_CONNECTION_LOST') {
-            initializeDb();
+            connect();
         } else {
             throw err;
         }
