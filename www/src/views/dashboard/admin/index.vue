@@ -14,7 +14,7 @@
         type="year"
         placeholder="选择年"
         value-format="yyyy"
-         style="width: 140px"
+        style="width: 140px"
       />
       <el-date-picker
         v-model="listQuery.month"
@@ -22,9 +22,9 @@
         type="month"
         placeholder="选择月"
         value-format="MM"
-         style="width: 140px"
+        style="width: 140px"
       />
-      <el-input class="attend-form" v-model="listQuery.attendForm" placeholder="参会形式" style="width: 140px"></el-input>
+      <el-input v-model="listQuery.attendForm" class="attend-form" placeholder="参会形式" style="width: 140px" />
       <!-- <el-select v-model="listQuery.year" placeholder="Type" clearable class="filter-item" style="width: 130px">
         <el-option v-for="item in calendarTypeOptions" :key="item.key" :label="item.display_name+'('+item.key+')'" :value="item.key" />
       </el-select>

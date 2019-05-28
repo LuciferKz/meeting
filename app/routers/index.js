@@ -30,7 +30,7 @@ const getMeetingCountSql = function (brandId, meetingId, year, attendForm) {
   let conditions = [];
   let str = '';
   str += 'SELECT count(*) as meetingCount, month(m.meeting_date) as month ';
-  str += 'FROM meeting as m , relation_brand_meeting as rbm, meeting_record as mr';
+  str += 'FROM meeting as m , relation_brand_meeting as rbm';
   if (brandId || meetingId || year) {
     str += ' WHERE ';
   }
@@ -45,10 +45,6 @@ const getMeetingCountSql = function (brandId, meetingId, year, attendForm) {
   if (year) {
     conditions.push('year(m.meeting_date) = ?')
     values.push(year)
-  }
-  if (attendForm) {
-    conditions.push('mr.meeting_attend_form like ?')
-    values.push(attendForm)
   }
   str += conditions.join(' and ')
   str += ' GROUP BY month(meeting_date)'
