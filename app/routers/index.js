@@ -24,13 +24,13 @@ router.use('/meeting-record', meetingRecord)
 router.use('/brand', brand)
 router.use('/log', log)
 
-const getMeetingCountSql = function (brandId, meetingId, year) {
+const getMeetingCountSql = function (brandId, meetingId, year, attendForm) {
   // 条件: 品牌 主题 年份
   let values = [];
   let conditions = [];
   let str = '';
   str += 'SELECT count(*) as meetingCount, month(m.meeting_date) as month ';
-  str += 'FROM meeting as m , relation_brand_meeting as rbm';
+  str += 'FROM meeting as m , relation_brand_meeting as rbm, meeting_record as mr';
   if (brandId || meetingId || year) {
     str += ' WHERE ';
   }
@@ -46,13 +46,17 @@ const getMeetingCountSql = function (brandId, meetingId, year) {
     conditions.push('year(m.meeting_date) = ?')
     values.push(year)
   }
+  if (attendForm) {
+    conditions.push('mr.meeting_attend_form like ?')
+    values.push(attendForm)
+  }
   str += conditions.join(' and ')
   str += ' GROUP BY month(meeting_date)'
 
   return { sql: str, values }
 }
 
-const getTotalCount = function (brandId, meetingId, year) {
+const getTotalCount = function (brandId, meetingId, year, attendForm) {
   let values = []
   let conditions = []
   let str = ''
@@ -62,7 +66,7 @@ const getTotalCount = function (brandId, meetingId, year) {
   str += 'sum(attend_director_count) as directorCount, '
   str += 'sum(attend_wechat_doctors_count) as wechatDoctorCount '
   str += 'FROM meeting_record as mr INNER JOIN meeting AS m ON m.id = mr.meeting_id'
-  if (brandId || meetingId || year || month) {
+  if (brandId || meetingId || year || month || attendForm) {
     str += ' WHERE '
   }
   if (brandId) {
@@ -77,13 +81,17 @@ const getTotalCount = function (brandId, meetingId, year) {
     conditions.push('year(m.meeting_date) = ?')
     values.push(year)
   }
+  if (attendForm) {
+    conditions.push('mr.meeting_attend_form like ?')
+    values.push(attendForm)
+  }
 
   str += conditions.join(' and ')
   str += ' group by month(meeting_date);'
   return { sql: str, values }
 }
 
-const getHospitalAndDuration = function (brandId, meetingId, year, month) {
+const getHospitalAndDuration = function (brandId, meetingId, year, month, attendForm) {
   let values = []
   let conditions = []
   let str = ''
@@ -110,12 +118,16 @@ const getHospitalAndDuration = function (brandId, meetingId, year, month) {
     conditions.push('month(m.meeting_date) = ?')
     values.push(month)
   }
+  if (attendForm) {
+    conditions.push('mr.meeting_attend_form like ?')
+    values.push(attendForm)
+  }
 
   str += conditions.join(' and ')
   return { sql: str, values }
 }
 
-const getDistrictGroup = function (brandId, meetingId, year, month) {
+const getDistrictGroup = function (brandId, meetingId, year, month, attendForm) {
   let values = []
   let conditions = []
   let str = ''
@@ -145,13 +157,17 @@ const getDistrictGroup = function (brandId, meetingId, year, month) {
     conditions.push('month(m.meeting_date) = ?')
     values.push(month)
   }
+  if (attendForm) {
+    conditions.push('mr.meeting_attend_form like ?')
+    values.push(attendForm)
+  }
 
   str += conditions.join(' and ')
   str += ' group by director_district order by totalAttendCount desc limit 0,20'
   return { sql: str, values }
 }
 
-const getProvinceGroup = function (brandId, meetingId, year, month) {
+const getProvinceGroup = function (brandId, meetingId, year, month, attendForm) {
   let values = []
   let conditions = []
   let str = ''
@@ -181,13 +197,17 @@ const getProvinceGroup = function (brandId, meetingId, year, month) {
     conditions.push('month(m.meeting_date) = ?')
     values.push(month)
   }
+  if (attendForm) {
+    conditions.push('mr.meeting_attend_form like ?')
+    values.push(attendForm)
+  }
 
   str += conditions.join(' and ')
   str += ' group by doctor_province order by totalAttendCount desc limit 0,20'
   return { sql: str, values }
 }
 
-const getCityGroup = function (brandId, meetingId, year, month) {
+const getCityGroup = function (brandId, meetingId, year, month, attendForm) {
   let values = []
   let conditions = []
   let str = ''
@@ -217,13 +237,17 @@ const getCityGroup = function (brandId, meetingId, year, month) {
     conditions.push('month(m.meeting_date) = ?')
     values.push(month)
   }
+  if (attendForm) {
+    conditions.push('mr.meeting_attend_form like ?')
+    values.push(attendForm)
+  }
 
   str += conditions.join(' and ')
   str += ' group by doctor_city order by totalAttendCount desc limit 0,20'
   return { sql: str, values }
 }
 
-const getDeptGroup = function (brandId, meetingId, year, month) {
+const getDeptGroup = function (brandId, meetingId, year, month, attendForm) {
   let values = []
   let conditions = []
   let str = '';
@@ -251,6 +275,10 @@ const getDeptGroup = function (brandId, meetingId, year, month) {
     conditions.push('month(m.meeting_date) = ?')
     values.push(month)
   }
+  if (attendForm) {
+    conditions.push('mr.meeting_attend_form like ?')
+    values.push(attendForm)
+  }
 
   str += conditions.join(' and ')
   str += ' group by doctor_dept;'
@@ -264,14 +292,15 @@ router.use('/dashboard', function (req, res, next) {
   let meetingId = params.meetingId
   let year = params.year ? params.year : new Date().getFullYear()
   let month = params.month ? params.month : new Date().getMonth() + 1
+  let attendForm = params.attendForm ? `%${params.attendForm}%` : null
   
-  const meetingCount = getMeetingCountSql(brandId, meetingId, year)
-  const totalCount = getTotalCount(brandId, meetingId, year)
-  const hospitalAndDurtaion = getHospitalAndDuration(brandId, meetingId, year, month)
-  const districtGroup = getDistrictGroup(brandId, meetingId, year, month)
-  const provinceGroup = getProvinceGroup(brandId, meetingId, year, month)
-  const cityGroup = getCityGroup(brandId, meetingId, year, month)
-  const deptGroup = getDeptGroup(brandId, meetingId, year, month)
+  const meetingCount = getMeetingCountSql(brandId, meetingId, year, attendForm)
+  const totalCount = getTotalCount(brandId, meetingId, year, attendForm)
+  const hospitalAndDurtaion = getHospitalAndDuration(brandId, meetingId, year, month, attendForm)
+  const districtGroup = getDistrictGroup(brandId, meetingId, year, month, attendForm)
+  const provinceGroup = getProvinceGroup(brandId, meetingId, year, month, attendForm)
+  const cityGroup = getCityGroup(brandId, meetingId, year, month, attendForm)
+  const deptGroup = getDeptGroup(brandId, meetingId, year, month, attendForm)
 
   Promise
   .all([

@@ -2,7 +2,7 @@
   <div class="dashboard-editor-container">
     <!-- <github-corner class="github-corner" /> -->
     <div class="filter-container">
-      <el-select v-if="isAdmin" v-model="listQuery.brandId" placeholder="品牌" clearable style="width: 180px" class="filter-item" @change="getMeetings">
+      <el-select v-if="isAdmin" v-model="listQuery.brandId" placeholder="品牌" clearable style="width: 120px" class="filter-item" @change="getMeetings">
         <el-option v-for="item in brandListOptions" :key="item.value" :label="item.label" :value="item.value" />
       </el-select>
       <el-select v-model="listQuery.meetingId" placeholder="会议主题" clearable style="width: 180px" class="filter-item">
@@ -14,6 +14,7 @@
         type="year"
         placeholder="选择年"
         value-format="yyyy"
+         style="width: 140px"
       />
       <el-date-picker
         v-model="listQuery.month"
@@ -21,7 +22,9 @@
         type="month"
         placeholder="选择月"
         value-format="MM"
+         style="width: 140px"
       />
+      <el-input class="attend-form" v-model="listQuery.attendForm" placeholder="参会形式" style="width: 140px"></el-input>
       <!-- <el-select v-model="listQuery.year" placeholder="Type" clearable class="filter-item" style="width: 130px">
         <el-option v-for="item in calendarTypeOptions" :key="item.key" :label="item.display_name+'('+item.key+')'" :value="item.key" />
       </el-select>
@@ -298,7 +301,8 @@ export default {
         brandId: null,
         meetingId: null,
         year: new Date().getFullYear().toString(),
-        month: (new Date().getMonth() + 1).toString()
+        month: (new Date().getMonth() + 1).toString(),
+        attendForm: null
       },
       brandListOptions: [],
       meetingListOptions: [],
@@ -494,6 +498,9 @@ export default {
   }
   h4{font-size: 26px;}
   .picker{
+    vertical-align: top;
+  }
+  .attend-form {
     vertical-align: top;
   }
 }
