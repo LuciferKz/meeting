@@ -359,7 +359,7 @@ export default {
       fetchData(this.listQuery)
         .then((res) => {
           const data = res.data
-          const meetingsData = chartData.meetings.series[0].data
+          const meetingsData = chartData.meetings.series[0].data = []
           const attendDoctorCount = getSeries('参会医生数', { stack: 'count' })
           const attendWechatDoctorCount = getSeries('微信散点医生数', { stack: 'count' })
           const attendDirectorCount = getSeries('参会代表数', { stack: 'count' })
@@ -367,6 +367,7 @@ export default {
           let meetingCount = 0
           data.countMeeting.forEach(d => {
             meetingCount += d.meetingCount
+            console.log(meetingCount)
             const index = d.month - 1
             this.$set(meetingsData, index, meetingCount)
           })

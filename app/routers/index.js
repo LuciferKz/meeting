@@ -30,14 +30,15 @@ const getMeetingCountSql = function (brandId, meetingId, year, attendForm) {
   let conditions = [];
   let str = '';
   str += 'SELECT count(*) as meetingCount, month(m.meeting_date) as month ';
-  str += 'FROM meeting as m , relation_brand_meeting as rbm';
-  if (brandId || meetingId || year) {
+  str += 'FROM meeting as m ';
+  str += 'INNER JOIN relation_brand_meeting as rbm ON m.id = rbm.meeting_id';
+  if (brandId) {
+    str += ', (SELECT * from relation_brand_meeting WHERE brand_id = ?) rbm WHERE m.id = rbm.meeting_id and ';
+    values.push(brandId);
+  } else if (meetingId || year) {
     str += ' WHERE ';
   }
-  if (brandId) {
-    conditions.push('rbm.brand_id = ?')
-    values.push(brandId)
-  }
+
   if (meetingId) {
     conditions.push('m.id = ?')
     values.push(meetingId)
@@ -94,9 +95,9 @@ const getHospitalAndDuration = function (brandId, meetingId, year, month, attend
   str += 'SELECT ';
   str += 'count(distinct doctor_hos) as countHospital, ';
   str += 'avg(stream_duration) as avgStreamDuration ';
-  str += 'FROM meeting_record as mr, meeting as m WHERE mr.meeting_id = m.id and ';
+  str += 'FROM meeting_record as mr, meeting as m WHERE mr.meeting_id = m.id';
   if (brandId || meetingId || year || month) {
-    str += ''
+    str += ' and '
   }
   if (brandId) {
     conditions.push('find_in_set(?,brand_id)')
