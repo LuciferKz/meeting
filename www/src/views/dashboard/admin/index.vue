@@ -25,7 +25,7 @@
         <el-option v-for="item in meetingListOptions" :key="item.value" :label="item.label" :value="item.value" />
       </el-select>
       <!-- <el-input v-model="listQuery.attendForm" class="attend-form" placeholder="参会形式" style="width: 140px" /> -->
-      <el-select v-model="listQuery.attendFormr" placeholder="参会形式"  class="filter-item" style="width: 130px">
+      <el-select v-model="listQuery.attendFormr" placeholder="参会形式" class="filter-item" style="width: 130px">
         <el-option v-for="item in attendForm" :key="item.key" :label="item.name" :value="item.name" />
       </el-select>
       <!-- <el-date-time v-model="listQuery.month" style="width: 140px" class="filter-item" @change="handleFilter"></el-date-time> -->
@@ -305,10 +305,10 @@ export default {
       brandListOptions: [],
       meetingListOptions: [],
       isAdmin: false,
-      attendForm:[
-        {name:'散点'},
-        {name:'科室会'},
-        {name:'微信端'}
+      attendForm: [
+        { name: '散点' },
+        { name: '科室会' },
+        { name: '微信端' }
       ]
     }
   },
