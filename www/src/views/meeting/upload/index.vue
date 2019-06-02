@@ -1,9 +1,9 @@
 <template>
   <div class="app-container">
     <upload-excel-component :on-success="handleSuccess" :on-submit="handleSubmit" :before-upload="beforeUpload" />
-    <el-table :data="tableData" border highlight-current-row style="width: 100%;margin-top:20px;">
+    <!-- <el-table :data="tableData" border highlight-current-row style="width: 100%;margin-top:20px;">
       <el-table-column v-for="(item, key) of tableHeader" :key="key" :prop="key" :label="item" />
-    </el-table>
+    </el-table> -->
   </div>
 </template>
 
@@ -77,8 +77,16 @@ export default {
         .then(() => {
           const formData = new FormData()
           formData.append('file', rawFile)
+          const loading = this.$loading({
+            lock: true,
+            text: 'Loading',
+            spinner: 'el-icon-loading',
+            background: 'rgba(0, 0, 0, 0.7)',
+            target: document.querySelector('.div1')
+          })
           uploadMeeting(formData)
             .then(res => {
+              loading.close()
               this.$message.success('上传成功')
               res.data.forEach(row => {
                 row.month = parseInt(row.meeting_date.split('-')[1]) + '月份'

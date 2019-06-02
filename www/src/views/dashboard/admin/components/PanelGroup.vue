@@ -35,7 +35,7 @@
           <div class="card-panel-text">
             覆盖医生
           </div>
-          <count-to :start-val="0" :end-val="data.countDoctors" :duration="2400" class="card-panel-num" />
+          <count-to :start-val="0" :end-val="data.sumDoctor" :duration="2400" class="card-panel-num" />
         </div>
       </div>
     </el-col>
@@ -48,7 +48,7 @@
           <div class="card-panel-text">
             覆盖代表
           </div>
-          <count-to :start-val="0" :end-val="data.countDirectors" :duration="2600" class="card-panel-num" />
+          <count-to :start-val="0" :end-val="data.sumDirector" :duration="2600" class="card-panel-num" />
         </div>
       </div>
     </el-col>
