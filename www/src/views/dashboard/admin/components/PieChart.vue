@@ -54,7 +54,7 @@ export default {
       this.setOption(this.chartData)
     },
 
-    setOption({ series } = {}) {
+    setOption({ series, legend } = {}) {
       this.chart.setOption({
         tooltip: {
           trigger: 'item',

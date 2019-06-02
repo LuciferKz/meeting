@@ -146,7 +146,7 @@ const getSeries = function(name, option = {}) {
   return series
 }
 
-const getPieSeries = function (name) {
+const getPieSeries = function(name) {
   return [
     {
       name,
@@ -156,7 +156,12 @@ const getPieSeries = function (name) {
       center: ['50%', '38%'],
       data: [],
       animationEasing: 'cubicInOut',
-      animationDuration: 2600
+      animationDuration: 2600,
+      label: {
+        normal: {
+          formatter: '{b} {d}%  ',
+        }
+      }
     }
   ]
 }
@@ -455,8 +460,8 @@ export default {
           })
 
           const deptAttendCount = getPieSeries('参会总人数', { stack: null, barWidth: '25%' })
-          // const depts = []
-          
+          const depts = []
+
           data.group.dept.forEach(d => {
             // deptAttendCount.data.push(d.deptAttendCount)
             // depts.push(d.doctor_dept === null ? '其他' : d.doctor_dept)
@@ -464,6 +469,7 @@ export default {
               value: d.deptAttendCount,
               name: d.doctor_dept === null ? '其他' : d.doctor_dept
             })
+            // depts.push( d.doctor_dept === null ? '其他' : d.doctor_dept + '({d}%)')
           })
 
           // 参会医生
@@ -489,6 +495,7 @@ export default {
           // 科室分布
           chartData.dept.series = deptAttendCount
           // chartData.dept.xAxis[0].data = depts
+          // chartData.dept.legend = depts
 
           this.showDoctors = true
           this.showDirectors = true
