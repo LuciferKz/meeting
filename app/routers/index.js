@@ -94,7 +94,10 @@ const getHospitalAndDuration = function (brandId, meetingId, year, month, attend
   let str = ''
   str += 'SELECT ';
   str += 'count(distinct doctor_hos) as countHospital, ';
-  str += 'avg(stream_duration) as avgStreamDuration ';
+  str += 'avg(stream_duration) as avgStreamDuration, ';
+  str += 'sum(attend_doctor_count) as sumDoctor, '
+  str += 'sum(attend_director_count) as sumDirector, '
+  str += 'sum(attend_wechat_doctors_count) as sumWechatDoctor '
   str += 'FROM meeting_record as mr, meeting as m WHERE mr.meeting_id = m.id';
   if (brandId || meetingId || year || month) {
     str += ' and '
@@ -324,6 +327,9 @@ router.use('/dashboard', function (req, res, next) {
         bar: data[1],
         countHospital: data[2][0].countHospital,
         avgStreamDuration: data[2][0].avgStreamDuration,
+        sumDoctor: data[2][0].sumDoctor,
+        sumDirector: data[2][0].sumDirector,
+        sumWechatDoctor: data[2][0].sumWechatDoctor,
         group: {
           district: data[3],
           province: data[4],

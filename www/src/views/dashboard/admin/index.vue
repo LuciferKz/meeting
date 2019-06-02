@@ -25,7 +25,7 @@
         <el-option v-for="item in meetingListOptions" :key="item.value" :label="item.label" :value="item.value" />
       </el-select>
       <!-- <el-input v-model="listQuery.attendForm" class="attend-form" placeholder="参会形式" style="width: 140px" /> -->
-      <el-select v-model="listQuery.attendFormr" placeholder="参会形式"  class="filter-item" style="width: 130px">
+      <el-select v-model="listQuery.attendForm" placeholder="参会形式"  class="filter-item" style="width: 130px">
         <el-option v-for="item in attendForm" :key="item.key" :label="item.name" :value="item.name" />
       </el-select>
       <!-- <el-date-time v-model="listQuery.month" style="width: 140px" class="filter-item" @change="handleFilter"></el-date-time> -->
@@ -222,6 +222,8 @@ const chartData = {
   countHospital: 0,
   countDoctors: 0,
   countDirectors: 0,
+  sumDoctor: 0,
+  sumDirector: 0,
   district: {
     xAxis: [{
       type: 'category',
@@ -384,6 +386,9 @@ export default {
             this.$set(attendWechatDoctorCount.data, index, d.wechatDoctorCount)
             this.$set(attendDirectorCount.data, index, d.directorCount)
           })
+
+          chartData.sumDoctor = data.sumDoctor + data.sumWechatDoctor
+          chartData.sumDirector = data.sumDirector
 
           attendDoctorCount.itemStyle.normal.label.position = 'insideTop'
           attendWechatDoctorCount.itemStyle.normal.label.position = 'insideTop'
