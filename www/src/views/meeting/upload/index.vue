@@ -83,7 +83,7 @@ export default {
             spinner: 'el-icon-loading',
             background: 'rgba(0, 0, 0, 0.7)',
             target: document.querySelector('.div1')
-          });
+          })
           uploadMeeting(formData)
             .then(res => {
               loading.close()

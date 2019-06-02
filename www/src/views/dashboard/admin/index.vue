@@ -25,7 +25,7 @@
         <el-option v-for="item in meetingListOptions" :key="item.value" :label="item.label" :value="item.value" />
       </el-select>
       <!-- <el-input v-model="listQuery.attendForm" class="attend-form" placeholder="参会形式" style="width: 140px" /> -->
-      <el-select v-model="listQuery.attendForm" placeholder="参会形式"  class="filter-item" style="width: 130px">
+      <el-select v-model="listQuery.attendForm" placeholder="参会形式" class="filter-item" style="width: 130px">
         <el-option v-for="item in attendForm" :key="item.key" :label="item.name" :value="item.name" />
       </el-select>
       <!-- <el-date-time v-model="listQuery.month" style="width: 140px" class="filter-item" @change="handleFilter"></el-date-time> -->
@@ -71,7 +71,7 @@
 
     <h4>科室分布</h4>
     <el-row style="background:#fff;padding:16px 16px 0;margin-bottom:32px;">
-      <bar-chart v-if="showDeptGroup" :chart-data="chartData.dept" />
+      <pie-chart v-if="showDeptGroup" :chart-data="chartData.dept" />
     </el-row>
     <!-- <el-row style="background:#fff;padding:16px 16px 0;margin-bottom:32px;">
       <line-chart :chart-data="lineChartData" />
@@ -144,6 +144,21 @@ const getSeries = function(name, option = {}) {
   }
   if (option.stack) series.stack = option.stack
   return series
+}
+
+const getPieSeries = function (name) {
+  return [
+    {
+      name,
+      type: 'pie',
+      roseType: 'radius',
+      radius: [15, 95],
+      center: ['50%', '38%'],
+      data: [],
+      animationEasing: 'cubicInOut',
+      animationDuration: 2600
+    }
+  ]
 }
 
 const chartData = {
@@ -307,10 +322,10 @@ export default {
       brandListOptions: [],
       meetingListOptions: [],
       isAdmin: false,
-      attendForm:[
-        {name:'散点'},
-        {name:'科室会'},
-        {name:'微信端'}
+      attendForm: [
+        { name: '散点' },
+        { name: '科室会' },
+        { name: '微信端' }
       ]
     }
   },
@@ -439,11 +454,16 @@ export default {
             cities.push(d.doctor_city === null ? '其他' : d.doctor_city)
           })
 
-          const deptAttendCount = getSeries('参会总人数', { stack: null, barWidth: '25%' })
-          const depts = []
+          const deptAttendCount = getPieSeries('参会总人数', { stack: null, barWidth: '25%' })
+          // const depts = []
+          
           data.group.dept.forEach(d => {
-            deptAttendCount.data.push(d.deptAttendCount)
-            depts.push(d.doctor_dept === null ? '其他' : d.doctor_dept)
+            // deptAttendCount.data.push(d.deptAttendCount)
+            // depts.push(d.doctor_dept === null ? '其他' : d.doctor_dept)
+            deptAttendCount[0].data.push({
+              value: d.deptAttendCount,
+              name: d.doctor_dept === null ? '其他' : d.doctor_dept
+            })
           })
 
           // 参会医生
@@ -467,8 +487,8 @@ export default {
           chartData.city.series = [cityDoctorCount, cityWechatDoctorCount, cityDirectorCount]
           chartData.city.xAxis[0].data = cities
           // 科室分布
-          chartData.dept.series = [deptAttendCount]
-          chartData.dept.xAxis[0].data = depts
+          chartData.dept.series = deptAttendCount
+          // chartData.dept.xAxis[0].data = depts
 
           this.showDoctors = true
           this.showDirectors = true
