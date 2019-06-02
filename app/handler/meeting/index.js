@@ -13,18 +13,17 @@ let db;
 
 const createRelationBrandMeeting = function (brandId, meetingId) {
   return db.query('INSERT IGNORE INTO relation_brand_meeting (brand_id,meeting_id,relation_key) VALUES (?,?,?)', [brandId, meetingId, `${brandId}_${meetingId}`])
-  .then(data => {
-    return { id: data.insertId };
-  })
 }
 
 const createBrand = function (name) {
   // console.log('开始创建品牌', name)
   return db.query('INSERT INTO brand ( name ) VALUES (?)', [name])
   .then(data => {
-    // console.log('结束创建品牌', data)
-    brandMaps[name] = { id: data.insertId };
-    return brandMaps[name];
+    // console.log('结束创建品牌', name, data)
+    if (data) {
+      brandMaps[name] = { id: data.insertId }
+      return brandMaps[name]
+    }
   })
 }
 
@@ -52,8 +51,10 @@ const createMeeting = function (meeting) {
   return db.query('INSERT INTO meeting (theme, brands, type, founder, meeting_date, meeting_time) VALUES (?,?,?,?,?,?)', [theme, brands, type, founder, meeting_date, meeting_time])
   .then(data => {
     // console.log('结束创建会议信息', data)
-    meetingMaps[theme] = { id: data.insertId };
-    return meetingMaps[theme];
+    if (data) {
+      meetingMaps[theme] = { id: data.insertId };
+      return meetingMaps[theme];
+    }
   })
 }
 
@@ -83,10 +84,12 @@ function checkData (data) {
   for (let i = 0, len = data.length; i < len; i++) {
     let row = data[i]
     if (row.length) {
-      if (!row[3]) {
+      let meeting = row[3]
+      let brand = row[4]
+      if (!meeting) {
         code = 20004
         message = '有记录缺失主题'
-      } else if (!row[4]) {
+      } else if (!brand) {
         code = 20004
         message = '有记录缺失品牌'
       }
@@ -125,21 +128,17 @@ function* genQueue (data) {
       row[13] = moment(new Date(1900, 0, row[13] - 1)).format('YYYY-MM-DD HH:mm:ss');
       row[14] = moment(new Date(1900, 0, row[14] - 1)).format('YYYY-MM-DD HH:mm:ss');
       row.push(logId);
-      return db.query(sql.MEETING_RECORD_INSERT, row)
-      .then((data) => {
-        return data;
-      })
+      return db.query(sql.MEETING_RECORD_INSERT, row);
     })
     .catch(err => {
       console.log(err);
       throw err;
     })
-    current++
+    current++;
   }
 }
 
 const importExcel = function (data, gid) {
-  // let sliceData = data.splice(0, 1000);
   const result = checkData(data)
   if (result.code !== 20000) {
     return Promise.resolve(result)
@@ -157,10 +156,6 @@ const importExcel = function (data, gid) {
     res[1].forEach((b) => {
       brandMaps[b.name] = b
     })
-
-    // if (data.length > 0) {
-    //   importExcel()
-    // }
     const queue = genQueue(result.data)
     return runQueue(queue)
   })
@@ -229,38 +224,36 @@ const getMeetings = function (req, res) {
 }
 
 const upload = function (req, res) {
-  // db = initialize()
   db = connect()
-
   const originQuery = db.query
   db.query = function () {
       let args = Array.from(arguments)
       let last = args[args.length - 1]
       if (typeof last !== 'function') {
-          return new Promise((resolve, reject) => {
-              let cb = function (err, data, fields) {
-                  if (err) reject(err)
-                  resolve(data, fields)
-              }
-              args.push(cb)
-              originQuery.apply(db, args)
-          })
-          .catch(err => {
-            db.rollback(function (err) {
-              // db.end();
-              if (err) {
-                console.log("transaction error: " + err)
-                throw err
-              }
-            });
-            // console.log('db query', err)
-            // throw err;
-          })
-      } else {
+        return new Promise((resolve, reject) => {
+          let cb = function (err, data, fields) {
+            // console.log(err, data, fields)
+            if (err) reject(err)
+            resolve(data, fields)
+          }
+          args.push(cb)
           originQuery.apply(db, args)
+        })
+        .catch(err => {
+          db.rollback(function (err) {
+            // db.end();
+            if (err) {
+              console.log("transaction error: " + err)
+              throw err
+            }
+          });
+          console.log('db query', err)
+          throw err;
+        })
+      } else {
+        originQuery.apply(db, args)
       }
   }
-
 
   const form = new formidable.IncomingForm()
   form.parse(req,function(err, fields, files){
@@ -279,6 +272,7 @@ const upload = function (req, res) {
           .then((data) => {
             db.commit((err) => {
               if (err) throw err
+              console.log('数据导入完成')
               db.end()
               res.send(data)
             })
