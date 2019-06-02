@@ -5,9 +5,6 @@
       <el-select v-if="isAdmin" v-model="listQuery.brandId" placeholder="品牌" clearable style="width: 120px" class="filter-item" @change="getMeetings">
         <el-option v-for="item in brandListOptions" :key="item.value" :label="item.label" :value="item.value" />
       </el-select>
-      <el-select v-model="listQuery.meetingId" placeholder="会议主题" clearable style="width: 180px" class="filter-item">
-        <el-option v-for="item in meetingListOptions" :key="item.value" :label="item.label" :value="item.value" />
-      </el-select>
       <el-date-picker
         v-model="listQuery.year"
         class="picker"
@@ -24,14 +21,15 @@
         value-format="MM"
         style="width: 140px"
       />
-      <el-input v-model="listQuery.attendForm" class="attend-form" placeholder="参会形式" style="width: 140px" />
-      <!-- <el-select v-model="listQuery.year" placeholder="Type" clearable class="filter-item" style="width: 130px">
-        <el-option v-for="item in calendarTypeOptions" :key="item.key" :label="item.display_name+'('+item.key+')'" :value="item.key" />
+      <el-select v-model="listQuery.meetingId" placeholder="会议主题" clearable style="width: 180px" class="filter-item">
+        <el-option v-for="item in meetingListOptions" :key="item.value" :label="item.label" :value="item.value" />
       </el-select>
-      <el-date-time v-model="listQuery.month" style="width: 140px" class="filter-item" @change="handleFilter"></el-date-time> -->
-      <el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
-        搜索
-      </el-button>
+      <!-- <el-input v-model="listQuery.attendForm" class="attend-form" placeholder="参会形式" style="width: 140px" /> -->
+      <el-select v-model="listQuery.attendFormr" placeholder="参会形式"  class="filter-item" style="width: 130px">
+        <el-option v-for="item in attendForm" :key="item.key" :label="item.name" :value="item.name" />
+      </el-select>
+      <!-- <el-date-time v-model="listQuery.month" style="width: 140px" class="filter-item" @change="handleFilter"></el-date-time> -->
+      <el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">搜索</el-button>
     </div>
 
     <panel-group :data="chartData" />
@@ -306,7 +304,12 @@ export default {
       },
       brandListOptions: [],
       meetingListOptions: [],
-      isAdmin: false
+      isAdmin: false,
+      attendForm:[
+        {name:'散点'},
+        {name:'科室会'},
+        {name:'微信端'}
+      ]
     }
   },
   created() {
