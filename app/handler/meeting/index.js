@@ -4,6 +4,7 @@ const formidable = require('formidable');
 const xlsx = require('node-xlsx');
 const fs = require('fs');
 const initialize = require('../../db/initialize');
+const connect = require('../../db/index')
 
 let meetingMaps = {};
 let brandMaps = {};
@@ -228,7 +229,39 @@ const getMeetings = function (req, res) {
 }
 
 const upload = function (req, res) {
-  db = initialize()
+  // db = initialize()
+  db = connect()
+
+  const originQuery = db.query
+  db.query = function () {
+      let args = Array.from(arguments)
+      let last = args[args.length - 1]
+      if (typeof last !== 'function') {
+          return new Promise((resolve, reject) => {
+              let cb = function (err, data, fields) {
+                  if (err) reject(err)
+                  resolve(data, fields)
+              }
+              args.push(cb)
+              originQuery.apply(db, args)
+          })
+          .catch(err => {
+            db.rollback(function (err) {
+              // db.end();
+              if (err) {
+                console.log("transaction error: " + err)
+                throw err
+              }
+            });
+            // console.log('db query', err)
+            // throw err;
+          })
+      } else {
+          originQuery.apply(db, args)
+      }
+  }
+
+
   const form = new formidable.IncomingForm()
   form.parse(req,function(err, fields, files){
     const sheets = xlsx.parse(fs.readFileSync(files.file.path))
@@ -237,23 +270,29 @@ const upload = function (req, res) {
       username: req.body.decoded.username,
       filename: files.file.name
     }
-    db.query(sql.LOG_CREATE,[params.username, params.filename, 'upload', moment().format('YYYY-MM-DD HH:mm:ss')])
-    .then((log) => {
-      if (log) {
-        importExcel(sheets[0].data, log.insertId)
-        .then((data) => {
+    db.beginTransaction(err => {
+      if (err) throw err
+      db.query(sql.LOG_CREATE,[params.username, params.filename, 'upload', moment().format('YYYY-MM-DD HH:mm:ss')])
+      .then((log) => {
+        if (log) {
+          importExcel(sheets[0].data, log.insertId)
+          .then((data) => {
+            db.commit((err) => {
+              if (err) throw err
+              db.end()
+              res.send(data)
+            })
+          })
+        } else {
           db.end()
-          res.send(data)
-        })
-      } else {
-        db.end()
-        res.send({
-          code: 20002,
-          message: '日志生成失败'
-        })
-      }
+          res.send({
+            code: 20002,
+            message: '日志生成失败'
+          })
+        }
+      })
     })
-  });
+  })
 }
 
 module.exports = {
