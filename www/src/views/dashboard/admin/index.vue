@@ -428,7 +428,10 @@ export default {
             dictDoctorCount.data.push(d.attendDoctorCount)
             dictWechatDoctorCount.data.push(d.attendWechatDoctorsCount)
             dictDirectorCount.data.push(d.attendDirectorCount)
-            districts.push(d.director_district === null ? '其他' : d.director_district)
+            if (d.director_district !== null) {
+              districts.push(d.director_district)
+            }
+            // districts.push(d.director_district === null ? '其他' : d.director_district)
           })
 
           const povDoctorCount = getSeries('参会医生数', { stack: null, barWidth: '25%' })
@@ -442,7 +445,10 @@ export default {
             povDoctorCount.data.push(d.attendDoctorCount)
             povWechatDoctorCount.data.push(d.attendWechatDoctorsCount)
             povDirectorCount.data.push(d.attendDirectorCount)
-            provinces.push(d.doctor_province === null ? '其他' : d.doctor_province)
+            if (d.doctor_province !== null) {
+              provinces.push(d.doctor_province)
+            }
+            // provinces.push(d.doctor_province === null ? '其他' : d.doctor_province)
           })
 
           const cityDoctorCount = getSeries('参会医生数', { stack: null, barWidth: '25%' })
@@ -456,7 +462,10 @@ export default {
             cityDoctorCount.data.push(d.attendDoctorCount)
             cityWechatDoctorCount.data.push(d.attendWechatDoctorsCount)
             cityDirectorCount.data.push(d.attendDirectorCount)
-            cities.push(d.doctor_city === null ? '其他' : d.doctor_city)
+            if (d.doctor_city !== null) {
+              cities.push(d.doctor_city)
+            }
+            // cities.push(d.doctor_city === null ? '其他' : d.doctor_city)
           })
 
           const deptAttendCount = getPieSeries('参会总人数', { stack: null, barWidth: '25%' })
