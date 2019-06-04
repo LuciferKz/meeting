@@ -25,7 +25,7 @@
         <el-option v-for="item in meetingListOptions" :key="item.value" :label="item.label" :value="item.value" />
       </el-select>
       <!-- <el-input v-model="listQuery.attendForm" class="attend-form" placeholder="参会形式" style="width: 140px" /> -->
-      <el-select v-model="listQuery.attendForm" placeholder="参会形式" class="filter-item" style="width: 130px">
+      <el-select v-model="listQuery.attendForm" placeholder="参会形式" clearable class="filter-item" style="width: 130px">
         <el-option v-for="item in attendForm" :key="item.key" :label="item.name" :value="item.name" />
       </el-select>
       <!-- <el-date-time v-model="listQuery.month" style="width: 140px" class="filter-item" @change="handleFilter"></el-date-time> -->
@@ -153,7 +153,7 @@ const getPieSeries = function(name) {
       type: 'pie',
       roseType: 'radius',
       radius: [15, 95],
-      center: ['50%', '38%'],
+      center: ['50%', '50%'],
       data: [],
       animationEasing: 'cubicInOut',
       animationDuration: 2600,
@@ -415,7 +415,7 @@ export default {
           attendDirectorCount.itemStyle.normal.label.position = 'insideTop'
           attendDoctorCount.itemStyle.normal.color = '#6f90e9'
           attendWechatDoctorCount.itemStyle.normal.color = '#7fd2f5'
-          attendDirectorCount.itemStyle.normal.color = '#e1c39e'
+          attendDirectorCount.itemStyle.normal.color = '#61b3ff'
 
           const dictDoctorCount = getSeries('参会医生数', { barWidth: '25%' })
           const dictWechatDoctorCount = getSeries('微信散点医生数', { barWidth: '25%' })
@@ -423,12 +423,18 @@ export default {
           dictDoctorCount.itemStyle.normal.label.position = 'top'
           dictWechatDoctorCount.itemStyle.normal.label.position = 'top'
           dictDirectorCount.itemStyle.normal.label.position = 'top'
+          dictDoctorCount.itemStyle.normal.color = '#6f90e9'
+          dictWechatDoctorCount.itemStyle.normal.color = '#7fd2f5'
+          dictDirectorCount.itemStyle.normal.color = '#61b3ff'
           const districts = []
           data.group.district.forEach(d => {
             dictDoctorCount.data.push(d.attendDoctorCount)
             dictWechatDoctorCount.data.push(d.attendWechatDoctorsCount)
             dictDirectorCount.data.push(d.attendDirectorCount)
-            districts.push(d.director_district === null ? '其他' : d.director_district)
+            if (d.director_district !== null) {
+              districts.push(d.director_district)
+            }
+            // districts.push(d.director_district === null ? '其他' : d.director_district)
           })
 
           const povDoctorCount = getSeries('参会医生数', { stack: null, barWidth: '25%' })
@@ -437,12 +443,18 @@ export default {
           povDoctorCount.itemStyle.normal.label.position = 'top'
           povWechatDoctorCount.itemStyle.normal.label.position = 'top'
           povDirectorCount.itemStyle.normal.label.position = 'top'
+          povDoctorCount.itemStyle.normal.color = '#6f90e9'
+          povWechatDoctorCount.itemStyle.normal.color = '#7fd2f5'
+          povDirectorCount.itemStyle.normal.color = '#61b3ff'
           const provinces = []
           data.group.province.forEach(d => {
             povDoctorCount.data.push(d.attendDoctorCount)
             povWechatDoctorCount.data.push(d.attendWechatDoctorsCount)
             povDirectorCount.data.push(d.attendDirectorCount)
-            provinces.push(d.doctor_province === null ? '其他' : d.doctor_province)
+            if (d.doctor_province !== null) {
+              provinces.push(d.doctor_province)
+            }
+            // provinces.push(d.doctor_province === null ? '其他' : d.doctor_province)
           })
 
           const cityDoctorCount = getSeries('参会医生数', { stack: null, barWidth: '25%' })
@@ -451,12 +463,18 @@ export default {
           cityDoctorCount.itemStyle.normal.label.position = 'top'
           cityWechatDoctorCount.itemStyle.normal.label.position = 'top'
           cityDirectorCount.itemStyle.normal.label.position = 'top'
+          cityDoctorCount.itemStyle.normal.color = '#6f90e9'
+          cityWechatDoctorCount.itemStyle.normal.color = '#7fd2f5'
+          cityDoctorCount.itemStyle.normal.color = '#61b3ff'
           const cities = []
           data.group.city.forEach(d => {
             cityDoctorCount.data.push(d.attendDoctorCount)
             cityWechatDoctorCount.data.push(d.attendWechatDoctorsCount)
             cityDirectorCount.data.push(d.attendDirectorCount)
-            cities.push(d.doctor_city === null ? '其他' : d.doctor_city)
+            if (d.doctor_city !== null) {
+              cities.push(d.doctor_city)
+            }
+            // cities.push(d.doctor_city === null ? '其他' : d.doctor_city)
           })
 
           const deptAttendCount = getPieSeries('参会总人数', { stack: null, barWidth: '25%' })
