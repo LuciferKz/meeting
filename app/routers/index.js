@@ -31,7 +31,7 @@ const getMeetingCountSql = function (brandId, meetingId, year, attendForm) {
   let str = '';
   str += 'SELECT count(*) as meetingCount, month(m.meeting_date) as month ';
   str += 'FROM meeting as m ';
-  str += 'INNER JOIN relation_brand_meeting as rbm ON m.id = rbm.meeting_id';
+  // str += 'INNER JOIN relation_brand_meeting as rbm ON m.id = rbm.meeting_id';
   if (brandId) {
     str += ', (SELECT * from relation_brand_meeting WHERE brand_id = ?) rbm WHERE m.id = rbm.meeting_id and ';
     values.push(brandId);

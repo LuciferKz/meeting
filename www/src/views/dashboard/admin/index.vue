@@ -159,7 +159,7 @@ const getPieSeries = function(name) {
       animationDuration: 2600,
       label: {
         normal: {
-          formatter: '{b} {d}%  ',
+          formatter: '{b} {d}%  '
         }
       }
     }
