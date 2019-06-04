@@ -159,7 +159,7 @@ const getPieSeries = function(name) {
       animationDuration: 2600,
       label: {
         normal: {
-          formatter: '{b} {d}%  ',
+          formatter: '{b} {d}%  '
         }
       }
     }
@@ -415,7 +415,7 @@ export default {
           attendDirectorCount.itemStyle.normal.label.position = 'insideTop'
           attendDoctorCount.itemStyle.normal.color = '#6f90e9'
           attendWechatDoctorCount.itemStyle.normal.color = '#7fd2f5'
-          attendDirectorCount.itemStyle.normal.color = '#e1c39e'
+          attendDirectorCount.itemStyle.normal.color = '#61b3ff'
 
           const dictDoctorCount = getSeries('参会医生数', { barWidth: '25%' })
           const dictWechatDoctorCount = getSeries('微信散点医生数', { barWidth: '25%' })
@@ -423,6 +423,9 @@ export default {
           dictDoctorCount.itemStyle.normal.label.position = 'top'
           dictWechatDoctorCount.itemStyle.normal.label.position = 'top'
           dictDirectorCount.itemStyle.normal.label.position = 'top'
+          dictDoctorCount.itemStyle.normal.color = '#6f90e9'
+          dictWechatDoctorCount.itemStyle.normal.color = '#7fd2f5'
+          dictDirectorCount.itemStyle.normal.color = '#61b3ff'
           const districts = []
           data.group.district.forEach(d => {
             dictDoctorCount.data.push(d.attendDoctorCount)
@@ -440,6 +443,9 @@ export default {
           povDoctorCount.itemStyle.normal.label.position = 'top'
           povWechatDoctorCount.itemStyle.normal.label.position = 'top'
           povDirectorCount.itemStyle.normal.label.position = 'top'
+          povDoctorCount.itemStyle.normal.color = '#6f90e9'
+          povWechatDoctorCount.itemStyle.normal.color = '#7fd2f5'
+          povDirectorCount.itemStyle.normal.color = '#61b3ff'
           const provinces = []
           data.group.province.forEach(d => {
             povDoctorCount.data.push(d.attendDoctorCount)
@@ -457,6 +463,9 @@ export default {
           cityDoctorCount.itemStyle.normal.label.position = 'top'
           cityWechatDoctorCount.itemStyle.normal.label.position = 'top'
           cityDirectorCount.itemStyle.normal.label.position = 'top'
+          cityDoctorCount.itemStyle.normal.color = '#6f90e9'
+          cityWechatDoctorCount.itemStyle.normal.color = '#7fd2f5'
+          cityDoctorCount.itemStyle.normal.color = '#61b3ff'
           const cities = []
           data.group.city.forEach(d => {
             cityDoctorCount.data.push(d.attendDoctorCount)
