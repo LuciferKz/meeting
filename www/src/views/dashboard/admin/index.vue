@@ -12,6 +12,7 @@
         placeholder="选择年"
         value-format="yyyy"
         style="width: 140px"
+        @change="handleDateChange"
       />
       <el-date-picker
         v-model="listQuery.month"
@@ -20,6 +21,7 @@
         placeholder="选择月"
         value-format="MM"
         style="width: 140px"
+        @change="handleDateChange"
       />
       <el-select v-model="listQuery.meetingId" placeholder="会议主题" clearable style="width: 180px" class="filter-item">
         <el-option v-for="item in meetingListOptions" :key="item.value" :label="item.label" :value="item.value" />
@@ -320,8 +322,10 @@ export default {
       listQuery: {
         brandId: null,
         meetingId: null,
-        year: new Date().getFullYear().toString(),
-        month: (new Date().getMonth() + 1).toString(),
+        // year: new Date().getFullYear().toString(),
+        // month: (new Date().getMonth() + 1).toString(),
+        year: null,
+        month: null,
         attendForm: null
       },
       brandListOptions: [],
@@ -362,15 +366,16 @@ export default {
     },
 
     getMeetings() {
+      this.listQuery.meetingId = null
       fetchMeetingList({ page: 1, limit: 100, brandId: this.listQuery.brandId })
-        .then(res => {
-          this.meetingListOptions = res.data.items.map(m => {
-            return {
-              value: m.id,
-              label: m.theme
-            }
-          })
+      .then(res => {
+        this.meetingListOptions = res.data.items.map(m => {
+          return {
+            value: m.id,
+            label: m.theme
+          }
         })
+      })
     },
 
     getData() {
@@ -527,6 +532,19 @@ export default {
 
     handleFilter() {
       this.getData()
+    },
+
+    handleDateChange() {
+      this.listQuery.meetingId = null
+      fetchMeetingList({ page: 1, limit: 100, brandId: this.listQuery.brandId, year: this.listQuery.year, month: this.listQuery.month })
+      .then(res => {
+        this.meetingListOptions = res.data.items.map(m => {
+          return {
+            value: m.id,
+            label: m.theme
+          }
+        })
+      })
     }
   }
 }
