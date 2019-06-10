@@ -113,7 +113,7 @@ const getHospitalAndDuration = function (brandId, meetingId, year, month, attend
     values.push(year)
   }
   if (month) {
-    conditions.push('month(m.meeting_date) = ?')
+    conditions.push('month(m.meeting_date) in (?)')
     values.push(month)
   }
   if (attendForm) {
@@ -149,7 +149,7 @@ const getDistrictGroup = function (brandId, meetingId, year, month, attendForm) 
     values.push(year)
   }
   if (month) {
-    conditions.push('month(m.meeting_date) = ?')
+    conditions.push('month(m.meeting_date) in (?)')
     values.push(month)
   }
   if (attendForm) {
@@ -186,7 +186,7 @@ const getProvinceGroup = function (brandId, meetingId, year, month, attendForm) 
     values.push(year)
   }
   if (month) {
-    conditions.push('month(m.meeting_date) = ?')
+    conditions.push('month(m.meeting_date) in (?)')
     values.push(month)
   }
   if (attendForm) {
@@ -223,7 +223,7 @@ const getCityGroup = function (brandId, meetingId, year, month, attendForm) {
     values.push(year)
   }
   if (month) {
-    conditions.push('month(m.meeting_date) = ?')
+    conditions.push('month(m.meeting_date) in (?)')
     values.push(month)
   }
   if (attendForm) {
@@ -258,7 +258,7 @@ const getDeptGroup = function (brandId, meetingId, year, month, attendForm) {
     values.push(year)
   }
   if (month) {
-    conditions.push('month(m.meeting_date) = ?')
+    conditions.push('month(m.meeting_date) in (?)')
     values.push(month)
   }
   if (attendForm) {
@@ -279,7 +279,7 @@ router.use('/dashboard', function (req, res, next) {
   let year = params.year
   let month = params.month
   let attendForm = params.attendForm ? `%${params.attendForm}%` : null
-  
+
   const meetingCount = getMeetingCountSql(brandId, meetingId, year, attendForm)
   const totalCount = getTotalCount(brandId, meetingId, year, attendForm)
   const hospitalAndDurtaion = getHospitalAndDuration(brandId, meetingId, year, month, attendForm)
