@@ -210,7 +210,7 @@ const getMeetings = function (req, res) {
   }
 
   if (month) {
-    conditionQuery.push('month(m.meeting_date) = ?')
+    conditionQuery.push('month(m.meeting_date) in (?)')
     whereParams.push(month)
   }
 

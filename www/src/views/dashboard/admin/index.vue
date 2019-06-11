@@ -14,7 +14,7 @@
         style="width: 140px"
         @change="handleDateChange"
       />
-      <el-date-picker
+      <!-- <el-date-picker
         v-model="listQuery.month"
         class="picker"
         type="month"
@@ -22,7 +22,15 @@
         value-format="MM"
         style="width: 140px"
         @change="handleDateChange"
-      />
+      /> -->
+      <el-select v-model="listQuery.month" multiple placeholder="请选择月" class="picker" @change="handleDateChange">
+        <el-option
+          v-for="item in monthOptions"
+          :key="item.value"
+          :label="item.label"
+          :value="item.value">
+        </el-option>
+      </el-select>
       <el-select v-model="listQuery.meetingId" placeholder="会议主题" clearable style="width: 180px" class="filter-item">
         <el-option v-for="item in meetingListOptions" :key="item.value" :label="item.label" :value="item.value" />
       </el-select>
@@ -325,7 +333,7 @@ export default {
         // year: new Date().getFullYear().toString(),
         // month: (new Date().getMonth() + 1).toString(),
         year: null,
-        month: null,
+        month: [],
         attendForm: null
       },
       brandListOptions: [],
@@ -335,10 +343,25 @@ export default {
         { name: '散点' },
         { name: '科室会' },
         { name: '微信端' }
+      ],
+      monthOptions: [
+        { label: '1月', value: '01' },
+        { label: '2月', value: '02' },
+        { label: '3月', value: '03' },
+        { label: '4月', value: '04' },
+        { label: '5月', value: '05' },
+        { label: '6月', value: '06' },
+        { label: '7月', value: '07' },
+        { label: '8月', value: '08' },
+        { label: '9月', value: '09' },
+        { label: '10月', value: '10' },
+        { label: '11月', value: '11' },
+        { label: '12月', value: '12' },
       ]
     }
   },
   created() {
+    console.log(this.monthOptions)
     fetchBrandList()
       .then(res => {
         this.brandListOptions = res.data.items.map(brand => {
