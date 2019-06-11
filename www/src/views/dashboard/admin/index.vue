@@ -511,10 +511,16 @@ export default {
           data.group.dept.forEach(d => {
             // deptAttendCount.data.push(d.deptAttendCount)
             // depts.push(d.doctor_dept === null ? '其他' : d.doctor_dept)
-            deptAttendCount[0].data.push({
-              value: d.deptAttendCount,
-              name: d.doctor_dept === null ? '其他' : d.doctor_dept
-            })
+            if (d.doctor_dept !== null) {
+              deptAttendCount[0].data.push({
+                value: d.deptAttendCount,
+                name: d.doctor_dept
+              })
+            }
+            // deptAttendCount[0].data.push({
+            //   value: d.deptAttendCount,
+            //   name: d.doctor_dept === null ? '其他' : d.doctor_dept
+            // })
             // depts.push( d.doctor_dept === null ? '其他' : d.doctor_dept + '({d}%)')
           })
 
