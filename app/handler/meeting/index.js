@@ -190,19 +190,39 @@ const getMeetings = function (req, res) {
   let limit = parseInt(params.limit)
   let whereParams = []
   let brandId = params.decoded.brand_id === 1 ? params.brandId : null
+  let year = params.year
+  let month = params.month
+  let conditionQuery = []
+  let conditionDb = ''
 
   if (brandId) {
-    conditionQuery = ' FROM meeting, relation_brand_meeting WHERE meeting.id = relation_brand_meeting.meeting_id and relation_brand_meeting.brand_id = ?'
-    conditionParams = [page*limit, limit]
-    whereParams = [brandId]
+    conditionDb = ' FROM meeting as m, relation_brand_meeting as rbm'
+    conditionQuery = ['m.id = rbm.meeting_id', 'rbm.brand_id = ?']
+    whereParams.push(brandId)
   } else {
-    conditionQuery = ' FROM meeting'
+    conditionDb = ' FROM meeting as m'
     whereParams = []
   }
 
+  if (year) {
+    conditionQuery.push('year(m.meeting_date) = ?')
+    whereParams.push(year)
+  }
+
+  if (month) {
+    conditionQuery.push('month(m.meeting_date) = ?')
+    whereParams.push(month)
+  }
+
+  if (conditionQuery.length) {
+    conditionDb = conditionDb + ' WHERE '
+  }
+
+  conditionQuery = conditionQuery.join(' and ')
+
   return Promise.all([
-    db.query('SELECT meeting.id as id, meeting.brands, meeting.theme, meeting.meeting_time, meeting.meeting_date, meeting.type, meeting.founder' + conditionQuery + ' ORDER BY meeting.meeting_date desc LIMIT ?,?', [...whereParams, page*limit, limit]),
-    db.query('SELECT count(*) as total' + conditionQuery, [...whereParams])
+    db.query('SELECT m.id as id, m.brands, m.theme, m.meeting_time, m.meeting_date, m.type, m.founder' + conditionDb + conditionQuery + ' ORDER BY m.meeting_date desc LIMIT ?,?', [...whereParams, page*limit, limit]),
+    db.query('SELECT count(*) as total' + conditionDb + conditionQuery, [...whereParams])
   ])
   .then(data => {
     let meetings = data[0];

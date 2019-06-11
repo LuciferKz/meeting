@@ -33,7 +33,8 @@ const getMeetingCountSql = function (brandId, meetingId, year, attendForm) {
   str += 'FROM meeting as m ';
   // str += 'INNER JOIN relation_brand_meeting as rbm ON m.id = rbm.meeting_id';
   if (brandId) {
-    str += ', (SELECT * from relation_brand_meeting WHERE brand_id = ?) rbm WHERE m.id = rbm.meeting_id and ';
+    str += ', (SELECT * from relation_brand_meeting WHERE brand_id = ?) rbm WHERE ';
+    conditions.push('m.id = rbm.meeting_id')
     values.push(brandId);
   } else if (meetingId || year) {
     str += ' WHERE ';
@@ -63,7 +64,7 @@ const getTotalCount = function (brandId, meetingId, year, attendForm) {
   str += 'sum(attend_director_count) as directorCount, '
   str += 'sum(attend_wechat_doctors_count) as wechatDoctorCount '
   str += 'FROM meeting_record as mr INNER JOIN meeting AS m ON m.id = mr.meeting_id'
-  if (brandId || meetingId || year || month || attendForm) {
+  if (brandId || meetingId || year || attendForm) {
     str += ' WHERE '
   }
   if (brandId) {
@@ -90,7 +91,7 @@ const getTotalCount = function (brandId, meetingId, year, attendForm) {
 
 const getHospitalAndDuration = function (brandId, meetingId, year, month, attendForm) {
   let values = []
-  let conditions = []
+  let conditions = ['mr.meeting_id = m.id']
   let str = ''
   str += 'SELECT ';
   str += 'count(distinct doctor_hos) as countHospital, ';
@@ -98,10 +99,7 @@ const getHospitalAndDuration = function (brandId, meetingId, year, month, attend
   str += 'sum(attend_doctor_count) as sumDoctor, '
   str += 'sum(attend_director_count) as sumDirector, '
   str += 'sum(attend_wechat_doctors_count) as sumWechatDoctor '
-  str += 'FROM meeting_record as mr, meeting as m WHERE mr.meeting_id = m.id';
-  if (brandId || meetingId || year || month) {
-    str += ' and '
-  }
+  str += 'FROM meeting_record as mr, meeting as m WHERE ';
   if (brandId) {
     conditions.push('find_in_set(?,brand_id)')
     values.push(brandId)
@@ -115,7 +113,7 @@ const getHospitalAndDuration = function (brandId, meetingId, year, month, attend
     values.push(year)
   }
   if (month) {
-    conditions.push('month(m.meeting_date) = ?')
+    conditions.push('month(m.meeting_date) in (?)')
     values.push(month)
   }
   if (attendForm) {
@@ -129,18 +127,15 @@ const getHospitalAndDuration = function (brandId, meetingId, year, month, attend
 
 const getDistrictGroup = function (brandId, meetingId, year, month, attendForm) {
   let values = []
-  let conditions = []
+  let conditions = ['mr.meeting_id = m.id']
   let str = ''
   str += 'SELECT sum(attend_doctor_count) as attendDoctorCount, '
   str += 'sum(attend_wechat_doctors_count) as attendWechatDoctorsCount, ' 
   str += 'sum(attend_director_count) as attendDirectorCount, '
   str += 'sum(ifnull(attend_doctor_count,0) + ifnull(attend_wechat_doctors_count,0) + ifnull(attend_director_count,0)) as totalAttendCount, '
   str += 'director_district '
-  str += 'FROM meeting_record as mr, meeting as m WHERE mr.meeting_id = m.id and '
+  str += 'FROM meeting_record as mr, meeting as m WHERE '
 
-  if (brandId || meetingId || year || month) {
-    str += ''
-  }
   if (brandId) {
     conditions.push('find_in_set(?,brand_id)')
     values.push(brandId)
@@ -154,7 +149,7 @@ const getDistrictGroup = function (brandId, meetingId, year, month, attendForm) 
     values.push(year)
   }
   if (month) {
-    conditions.push('month(m.meeting_date) = ?')
+    conditions.push('month(m.meeting_date) in (?)')
     values.push(month)
   }
   if (attendForm) {
@@ -169,18 +164,15 @@ const getDistrictGroup = function (brandId, meetingId, year, month, attendForm) 
 
 const getProvinceGroup = function (brandId, meetingId, year, month, attendForm) {
   let values = []
-  let conditions = []
+  let conditions = ['mr.meeting_id = m.id']
   let str = ''
   str += 'SELECT sum(attend_doctor_count) as attendDoctorCount, '
   str += 'sum(attend_wechat_doctors_count) as attendWechatDoctorsCount, ' 
   str += 'sum(attend_director_count) as attendDirectorCount, '
   str += 'sum(ifnull(attend_doctor_count,0) + ifnull(attend_wechat_doctors_count,0) + ifnull(attend_director_count,0)) as totalAttendCount, '
   str += 'doctor_province '
-  str += 'FROM meeting_record as mr, meeting as m WHERE mr.meeting_id = m.id and '
+  str += 'FROM meeting_record as mr, meeting as m WHERE '
 
-  if (brandId || meetingId || year || month) {
-    str += ''
-  }
   if (brandId) {
     conditions.push('find_in_set(?,brand_id)')
     values.push(brandId)
@@ -194,7 +186,7 @@ const getProvinceGroup = function (brandId, meetingId, year, month, attendForm) 
     values.push(year)
   }
   if (month) {
-    conditions.push('month(m.meeting_date) = ?')
+    conditions.push('month(m.meeting_date) in (?)')
     values.push(month)
   }
   if (attendForm) {
@@ -209,18 +201,15 @@ const getProvinceGroup = function (brandId, meetingId, year, month, attendForm) 
 
 const getCityGroup = function (brandId, meetingId, year, month, attendForm) {
   let values = []
-  let conditions = []
+  let conditions = ['mr.meeting_id = m.id']
   let str = ''
   str += 'SELECT sum(attend_doctor_count) as attendDoctorCount, '
   str += 'sum(attend_wechat_doctors_count) as attendWechatDoctorsCount, ' 
   str += 'sum(attend_director_count) as attendDirectorCount, '
   str += 'sum(ifnull(attend_doctor_count,0) + ifnull(attend_wechat_doctors_count,0) + ifnull(attend_director_count,0)) as totalAttendCount, '
   str += 'doctor_city '
-  str += 'FROM meeting_record as mr, meeting as m WHERE mr.meeting_id = m.id and '
+  str += 'FROM meeting_record as mr, meeting as m WHERE '
 
-  if (brandId || meetingId || year || month) {
-    str += ''
-  }
   if (brandId) {
     conditions.push('find_in_set(?,brand_id)')
     values.push(brandId)
@@ -234,7 +223,7 @@ const getCityGroup = function (brandId, meetingId, year, month, attendForm) {
     values.push(year)
   }
   if (month) {
-    conditions.push('month(m.meeting_date) = ?')
+    conditions.push('month(m.meeting_date) in (?)')
     values.push(month)
   }
   if (attendForm) {
@@ -249,16 +238,13 @@ const getCityGroup = function (brandId, meetingId, year, month, attendForm) {
 
 const getDeptGroup = function (brandId, meetingId, year, month, attendForm) {
   let values = []
-  let conditions = []
+  let conditions = ['mr.meeting_id = m.id']
   let str = '';
   str += 'SELECT ';
   str += 'sum(ifnull(attend_doctor_count,0) + ifnull(attend_wechat_doctors_count,0) + ifnull(attend_director_count,0)) as deptAttendCount, ';
   str += 'doctor_dept ';
-  str += 'FROM meeting_record as mr, meeting as m WHERE mr.meeting_id = m.id and ';
+  str += 'FROM meeting_record as mr, meeting as m WHERE ';
 
-  if (brandId || meetingId || year || month) {
-    str += ''
-  }
   if (brandId) {
     conditions.push('find_in_set(?,brand_id)')
     values.push(brandId)
@@ -272,7 +258,7 @@ const getDeptGroup = function (brandId, meetingId, year, month, attendForm) {
     values.push(year)
   }
   if (month) {
-    conditions.push('month(m.meeting_date) = ?')
+    conditions.push('month(m.meeting_date) in (?)')
     values.push(month)
   }
   if (attendForm) {
@@ -293,7 +279,7 @@ router.use('/dashboard', function (req, res, next) {
   let year = params.year
   let month = params.month
   let attendForm = params.attendForm ? `%${params.attendForm}%` : null
-  
+
   const meetingCount = getMeetingCountSql(brandId, meetingId, year, attendForm)
   const totalCount = getTotalCount(brandId, meetingId, year, attendForm)
   const hospitalAndDurtaion = getHospitalAndDuration(brandId, meetingId, year, month, attendForm)
