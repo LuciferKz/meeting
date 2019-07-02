@@ -51,7 +51,7 @@
               查看会议记录
             </el-button>
           </router-link>
-          <el-button type="primary" size="small" icon="el-icon-download" >
+          <el-button type="primary" size="small" icon="el-icon-download" @click="downLoadClick(scope)">
             下载会议记录
           </el-button>
         </template>
@@ -63,6 +63,7 @@
 </template>
 
 <script>
+import { fetchRecord } from '@/api/meeting-record'
 import { fetchList } from '@/api/meeting'
 import Pagination from '@/components/Pagination' // Secondary package based on el-pagination
 
@@ -106,6 +107,9 @@ export default {
     handleRowClick(row, column, event) {
       this.$router.push(`/meeting/${row.id}/meeting-records`)
     },
+    downLoadClick(e){
+      console.log(e)
+    }
   }
 }
 </script>
