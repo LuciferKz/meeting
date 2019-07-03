@@ -7,7 +7,6 @@
       fit
       highlight-current-row
       style="width: 100%"
-      @row-click="handleRowClick"
     >
       <el-table-column align="center" label="会议日期">
         <template slot-scope="scope">
@@ -48,10 +47,13 @@
       <el-table-column align="center" label="Actions">
         <template slot-scope="scope">
           <router-link :to="`/meeting/${scope.row.id}/meeting-records`">
-            <el-button type="primary" size="small" icon="el-icon-edit">
+            <el-button type="primary" size="small" icon="el-icon-edit-outline" >
               查看会议记录
             </el-button>
           </router-link>
+          <el-button type="primary" size="small" icon="el-icon-download" @click="downLoadClick(scope)">
+            下载会议记录
+          </el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -61,6 +63,7 @@
 </template>
 
 <script>
+import { fetchRecord } from '@/api/meeting-record'
 import { fetchList } from '@/api/meeting'
 import Pagination from '@/components/Pagination' // Secondary package based on el-pagination
 
@@ -103,6 +106,9 @@ export default {
     },
     handleRowClick(row, column, event) {
       this.$router.push(`/meeting/${row.id}/meeting-records`)
+    },
+    downLoadClick(e){
+      console.log(e)
     }
   }
 }
@@ -116,5 +122,8 @@ export default {
   position: absolute;
   right: 15px;
   top: 10px;
+}
+button {
+  margin-bottom: 10px;
 }
 </style>
