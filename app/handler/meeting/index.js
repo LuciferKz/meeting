@@ -125,8 +125,8 @@ function* genQueue (data) {
     })
     .then(() => {
       row[18] = row[18] || null;
-      row[13] = moment(new Date(1900, 0, row[13] - 1)).format('YYYY-MM-DD HH:mm:ss');
-      row[14] = moment(new Date(1900, 0, row[14] - 1)).format('YYYY-MM-DD HH:mm:ss');
+      row[13] = row[13] ? moment(new Date(1900, 0, row[13] - 1)).format('YYYY-MM-DD HH:mm:ss') : null;
+      row[14] = row[14] ? moment(new Date(1900, 0, row[14] - 1)).format('YYYY-MM-DD HH:mm:ss') : null;
       row.push(logId);
       return db.query(sql.MEETING_RECORD_INSERT, row);
     })
@@ -189,7 +189,7 @@ const getMeetings = function (req, res) {
   let page = parseInt(params.page) - 1
   let limit = parseInt(params.limit)
   let whereParams = []
-  let brandId = params.decoded.brand_id === 1 ? params.brandId : null
+  let brandId = params.decoded.brand_id === 1 ? null : params.decoded.brand_id
   let year = params.year
   let month = params.month
   let conditionQuery = []
