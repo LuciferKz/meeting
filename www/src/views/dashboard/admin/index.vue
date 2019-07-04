@@ -28,8 +28,8 @@
           v-for="item in monthOptions"
           :key="item.value"
           :label="item.label"
-          :value="item.value">
-        </el-option>
+          :value="item.value"
+        />
       </el-select>
       <el-select v-model="listQuery.meetingId" placeholder="会议主题" clearable style="width: 180px" class="filter-item">
         <el-option v-for="item in meetingListOptions" :key="item.value" :label="item.label" :value="item.value" />
@@ -356,7 +356,7 @@ export default {
         { label: '9月', value: '09' },
         { label: '10月', value: '10' },
         { label: '11月', value: '11' },
-        { label: '12月', value: '12' },
+        { label: '12月', value: '12' }
       ]
     }
   },
@@ -391,14 +391,14 @@ export default {
     getMeetings() {
       this.listQuery.meetingId = null
       fetchMeetingList({ page: 1, limit: 100, brandId: this.listQuery.brandId })
-      .then(res => {
-        this.meetingListOptions = res.data.items.map(m => {
-          return {
-            value: m.id,
-            label: m.theme
-          }
+        .then(res => {
+          this.meetingListOptions = res.data.items.map(m => {
+            return {
+              value: m.id,
+              label: m.theme
+            }
+          })
         })
-      })
     },
 
     getData() {
@@ -566,14 +566,14 @@ export default {
     handleDateChange() {
       this.listQuery.meetingId = null
       fetchMeetingList({ page: 1, limit: 100, brandId: this.listQuery.brandId, year: this.listQuery.year, month: this.listQuery.month })
-      .then(res => {
-        this.meetingListOptions = res.data.items.map(m => {
-          return {
-            value: m.id,
-            label: m.theme
-          }
+        .then(res => {
+          this.meetingListOptions = res.data.items.map(m => {
+            return {
+              value: m.id,
+              label: m.theme
+            }
+          })
         })
-      })
     }
   }
 }
