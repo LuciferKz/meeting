@@ -456,10 +456,10 @@ export default {
           dictDirectorCount.itemStyle.normal.color = '#61b3ff'
           const districts = []
           data.group.district.forEach(d => {
-            dictDoctorCount.data.push(d.attendDoctorCount)
-            dictWechatDoctorCount.data.push(d.attendWechatDoctorsCount)
-            dictDirectorCount.data.push(d.attendDirectorCount)
             if (d.director_district !== null) {
+              dictDoctorCount.data.push(d.attendDoctorCount)
+              dictWechatDoctorCount.data.push(d.attendWechatDoctorsCount)
+              dictDirectorCount.data.push(d.attendDirectorCount)
               districts.push(d.director_district)
             }
             // districts.push(d.director_district === null ? '其他' : d.director_district)
