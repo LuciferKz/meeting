@@ -44,16 +44,12 @@
         </template>
       </el-table-column>
 
-      <el-table-column align="center" label="Actions">
+      <el-table-column align="center" label="Actions" width="150" >
         <template slot-scope="scope">
           <router-link :to="`/meeting/${scope.row.id}/meeting-records`">
-            <el-button type="primary" size="small" icon="el-icon-edit-outline">
-              查看会议记录
-            </el-button>
+            <el-button type="text" size="small" icon="el-icon-edit-outline">查看</el-button>
           </router-link>
-          <el-button type="primary" size="small" icon="el-icon-download" @click="downLoadClick(scope.row.id)">
-            下载会议记录
-          </el-button>
+          <el-button type="text" size="small" icon="el-icon-download" @click="downLoadClick(scope.row.id)">下载</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -133,6 +129,6 @@ export default {
   top: 10px;
 }
 button {
-  margin-bottom: 10px;
+  margin-right: 10px;
 }
 </style>
