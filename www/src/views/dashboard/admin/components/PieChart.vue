@@ -53,7 +53,6 @@ export default {
       this.chart = echarts.init(this.$el, 'macarons')
       this.setOption(this.chartData)
     },
-
     setOption({ series, legend } = {}) {
       this.chart.setOption({
         tooltip: {
@@ -63,7 +62,7 @@ export default {
         legend: {
           left: 'center',
           bottom: '10',
-          data: ['Industries', 'Technology', 'Forex', 'Gold', 'Forecasts']
+          data: []
         },
         calculable: true,
         series

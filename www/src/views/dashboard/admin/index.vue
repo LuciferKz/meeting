@@ -443,7 +443,8 @@ export default {
           attendDirectorCount.itemStyle.normal.label.position = 'insideTop'
           attendDoctorCount.itemStyle.normal.color = '#6f90e9'
           attendWechatDoctorCount.itemStyle.normal.color = '#7fd2f5'
-          attendDirectorCount.itemStyle.normal.color = '#61b3ff'
+          attendDirectorCount.itemStyle.normal.color = '#e1c29d'
+
 
           const dictDoctorCount = getSeries('参会医生数', { barWidth: '25%' })
           const dictWechatDoctorCount = getSeries('微信散点医生数', { barWidth: '25%' })
@@ -453,7 +454,7 @@ export default {
           dictDirectorCount.itemStyle.normal.label.position = 'top'
           dictDoctorCount.itemStyle.normal.color = '#6f90e9'
           dictWechatDoctorCount.itemStyle.normal.color = '#7fd2f5'
-          dictDirectorCount.itemStyle.normal.color = '#61b3ff'
+          dictDirectorCount.itemStyle.normal.color = '#e1c29d'
           const districts = []
           data.group.district.forEach(d => {
             if (d.director_district !== null) {
@@ -473,7 +474,7 @@ export default {
           povDirectorCount.itemStyle.normal.label.position = 'top'
           povDoctorCount.itemStyle.normal.color = '#6f90e9'
           povWechatDoctorCount.itemStyle.normal.color = '#7fd2f5'
-          povDirectorCount.itemStyle.normal.color = '#61b3ff'
+          povDirectorCount.itemStyle.normal.color = '#e1c29d'
           const provinces = []
           data.group.province.forEach(d => {
             povDoctorCount.data.push(d.attendDoctorCount)
@@ -493,7 +494,7 @@ export default {
           cityDirectorCount.itemStyle.normal.label.position = 'top'
           cityDoctorCount.itemStyle.normal.color = '#6f90e9'
           cityWechatDoctorCount.itemStyle.normal.color = '#7fd2f5'
-          cityDoctorCount.itemStyle.normal.color = '#61b3ff'
+          cityDirectorCount.itemStyle.normal.color = '#e1c29d'
           const cities = []
           data.group.city.forEach(d => {
             cityDoctorCount.data.push(d.attendDoctorCount)
@@ -513,8 +514,8 @@ export default {
             // depts.push(d.doctor_dept === null ? '其他' : d.doctor_dept)
             if (d.doctor_dept !== null) {
               deptAttendCount[0].data.push({
-                value: d.deptAttendCount,
-                name: d.doctor_dept
+                name: d.doctor_dept,
+                value: d.deptAttendCount
               })
             }
             // deptAttendCount[0].data.push({
@@ -546,6 +547,7 @@ export default {
           chartData.city.xAxis[0].data = cities
           // 科室分布
           chartData.dept.series = deptAttendCount
+          console.log('科室分布',chartData.dept)
           // chartData.dept.xAxis[0].data = depts
           // chartData.dept.legend = depts
 
