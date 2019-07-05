@@ -47,7 +47,7 @@
       <el-table-column align="center" label="Actions">
         <template slot-scope="scope">
           <router-link :to="`/meeting/${scope.row.id}/meeting-records`">
-            <el-button type="primary" size="small" icon="el-icon-edit-outline" >
+            <el-button type="primary" size="small" icon="el-icon-edit-outline">
               查看会议记录
             </el-button>
           </router-link>
@@ -107,7 +107,7 @@ export default {
     handleRowClick(row, column, event) {
       this.$router.push(`/meeting/${row.id}/meeting-records`)
     },
-    downLoadClick(mid){
+    downLoadClick(mid) {
       fetchRecords({
         meeting_id: mid,
         page: 1,
