@@ -103,7 +103,7 @@ export default {
     handleRowClick(row, column, event) {
       this.$router.push(`/meeting/${row.id}/meeting-records`)
     },
-    downLoadClick(mid){
+    downLoadClick(mid) {
       fetchRecords({
         meeting_id: mid,
         page: 1,

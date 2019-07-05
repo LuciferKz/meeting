@@ -6,8 +6,8 @@ let db;
 
 const getMeetingRecords = function (req, res) {
   let params = req.query
-  let condition = ' WHERE meeting_record.meeting_id = ?'
-  let data = [params.meeting_id]
+  let condition = ' WHERE meeting_record.meeting_id = ? LIMIT ?,?'
+  let data = [params.meeting_id, (params.page - 1) * params.limit, parseInt(params.limit)]
 
   // db = initializeDb()
   return Promise.all([
