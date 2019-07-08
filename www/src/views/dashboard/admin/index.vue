@@ -477,10 +477,10 @@ export default {
           povDirectorCount.itemStyle.normal.color = '#e1c29d'
           const provinces = []
           data.group.province.forEach(d => {
-            povDoctorCount.data.push(d.attendDoctorCount)
-            povWechatDoctorCount.data.push(d.attendWechatDoctorsCount)
-            povDirectorCount.data.push(d.attendDirectorCount)
             if (d.doctor_province !== null) {
+              povDoctorCount.data.push(d.attendDoctorCount)
+              povWechatDoctorCount.data.push(d.attendWechatDoctorsCount)
+              povDirectorCount.data.push(d.attendDirectorCount)
               provinces.push(d.doctor_province)
             }
             // provinces.push(d.doctor_province === null ? '其他' : d.doctor_province)
@@ -497,10 +497,10 @@ export default {
           cityDirectorCount.itemStyle.normal.color = '#e1c29d'
           const cities = []
           data.group.city.forEach(d => {
-            cityDoctorCount.data.push(d.attendDoctorCount)
-            cityWechatDoctorCount.data.push(d.attendWechatDoctorsCount)
-            cityDirectorCount.data.push(d.attendDirectorCount)
             if (d.doctor_city !== null) {
+              cityDoctorCount.data.push(d.attendDoctorCount)
+              cityWechatDoctorCount.data.push(d.attendWechatDoctorsCount)
+              cityDirectorCount.data.push(d.attendDirectorCount)
               cities.push(d.doctor_city)
             }
             // cities.push(d.doctor_city === null ? '其他' : d.doctor_city)
