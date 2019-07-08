@@ -189,7 +189,7 @@ const getMeetings = function (req, res) {
   let page = parseInt(params.page) - 1
   let limit = parseInt(params.limit)
   let whereParams = []
-  let brandId = params.brandId ? params.brandId : (params.decoded.brand_id === 1 ? null : params.decoded.brand_id)
+  let brandId = params.decoded.brand_id !== 1 ? params.decoded.brand_id : params.brandId
   let year = params.year
   let month = params.month
   let conditionQuery = []

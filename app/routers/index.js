@@ -274,7 +274,7 @@ const getDeptGroup = function (brandId, meetingId, year, month, attendForm) {
 router.use('/dashboard', function (req, res, next) {
   // let db = initialDb()
   let params = req.query
-  let brandId = params.brandId ? params.brandId : (params.decoded.brand_id === 1 ? null : params.decoded.brand_id)
+  let brandId = params.decoded.brand_id !== 1 ? params.decoded.brand_id : params.brandId
   let meetingId = params.meetingId
   let year = params.year
   let month = params.month
