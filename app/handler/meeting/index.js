@@ -136,6 +136,8 @@ function* genQueue (data) {
 
 const importExcel = function (data, gid) {
   const result = checkData(data)
+  meetingMaps = {}
+  brandMaps = {}
   if (result.code !== 20000) {
     return Promise.resolve(result)
   }
