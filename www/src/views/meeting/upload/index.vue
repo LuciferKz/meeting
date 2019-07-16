@@ -84,17 +84,22 @@ export default {
             background: 'rgba(0, 0, 0, 0.7)',
             target: document.querySelector('.div1')
           })
-          uploadMeeting(formData)
-            .then(res => {
-              loading.close()
-              this.$message.success('上传成功')
-              res.data.forEach(row => {
-                row.month = parseInt(row.meeting_date.split('-')[1]) + '月份'
-              })
-              this.tableData = res.data
+          return uploadMeeting(formData)
+          .then(res => {
+            loading.close()
+            this.$message.success('上传成功')
+            res.data.forEach(row => {
+              row.month = parseInt(row.meeting_date.split('-')[1]) + '月份'
             })
+            this.tableData = res.data
+          })
+          .catch(err => {
+            loading.close()
+            this.$message.error(err) 
+          })
         })
-        .catch(err => { console.error(err) })
+        .catch(() => {
+        })
     }
   }
 }

@@ -130,10 +130,6 @@ function* genQueue (data) {
       row.push(logId);
       return db.query(sql.MEETING_RECORD_INSERT, row);
     })
-    .catch(err => {
-      console.log(err);
-      throw err;
-    })
     current++;
   }
 }
@@ -158,10 +154,6 @@ const importExcel = function (data, gid) {
     })
     const queue = genQueue(result.data)
     return runQueue(queue)
-  })
-  .catch(err => {
-    console.log(err)
-    throw err
   })
 }
 
@@ -237,10 +229,6 @@ const getMeetings = function (req, res) {
       message: '请求成功'
     })
   })
-  .catch(err => {
-    console.log(err)
-    throw err
-  })
 }
 
 const upload = function (req, res) {
@@ -258,17 +246,6 @@ const upload = function (req, res) {
           }
           args.push(cb)
           originQuery.apply(db, args)
-        })
-        .catch(err => {
-          db.rollback(function (err) {
-            // db.end();
-            if (err) {
-              console.log("transaction error: " + err)
-              throw err
-            }
-          });
-          console.log('db query', err)
-          throw err;
         })
       } else {
         originQuery.apply(db, args)
@@ -296,6 +273,22 @@ const upload = function (req, res) {
               db.end()
               res.send(data)
             })
+          })
+          .catch(err => {
+            db.rollback(function (err) {
+              // db.end();
+              if (err) {
+                console.log("transaction error: " + err)
+                throw err
+              }
+            });
+            db.end()
+            res.send({
+              code: 20002,
+              message: '日志生成失败',
+              err
+            })
+            // throw err
           })
         } else {
           db.end()
