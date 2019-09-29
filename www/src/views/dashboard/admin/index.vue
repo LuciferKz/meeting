@@ -442,7 +442,6 @@ export default {
           attendWechatDoctorCount.itemStyle.normal.color = '#7fd2f5'
           attendDirectorCount.itemStyle.normal.color = '#e1c29d'
 
-
           const dictDoctorCount = getSeries('参会医生数', { barWidth: '25%' })
           const dictWechatDoctorCount = getSeries('微信散点医生数', { barWidth: '25%' })
           const dictDirectorCount = getSeries('参会代表数', { barWidth: '25%' })
