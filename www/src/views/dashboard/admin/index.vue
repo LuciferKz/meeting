@@ -361,7 +361,6 @@ export default {
     }
   },
   created() {
-    console.log(this.monthOptions)
     fetchBrandList()
       .then(res => {
         this.brandListOptions = res.data.items.map(brand => {
@@ -380,7 +379,6 @@ export default {
     ])
   },
   mounted() {
-    console.log(this.listQuery)
     this.isAdmin = this.roles.includes('admin')
   },
   methods: {
@@ -420,7 +418,6 @@ export default {
           let meetingCount = 0
           data.countMeeting.forEach(d => {
             meetingCount += d.meetingCount
-            console.log(meetingCount)
             const index = d.month - 1
             this.$set(meetingsData, index, meetingCount)
           })
@@ -538,7 +535,6 @@ export default {
           // 各个大区参会人数
           chartData.district.series = [dictDoctorCount, dictWechatDoctorCount, dictDirectorCount]
           chartData.district.xAxis[0].data = districts
-          console.log(chartData.district)
           // 各个省份参会人数
           chartData.province.series = [povDoctorCount, povWechatDoctorCount, povDirectorCount]
           chartData.province.xAxis[0].data = provinces
@@ -547,7 +543,6 @@ export default {
           chartData.city.xAxis[0].data = cities
           // 科室分布
           chartData.dept.series = deptAttendCount
-          console.log('科室分布',chartData.dept)
           // chartData.dept.xAxis[0].data = depts
           // chartData.dept.legend = depts
 
