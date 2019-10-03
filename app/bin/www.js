@@ -1,4 +1,12 @@
 const app = require('../app')
-app.listen(3030, function () {
-    console.log('已连接到端口3030')
-})
+const http = require("http");
+const https = require("https");
+const fs = require("fs");
+
+const httpsOption = {
+    key : fs.readFileSync("./https/meeting_zhangzhenkai.key"),
+    cert: fs.readFileSync("./https/meeting_zhangzhenkai.pem")
+}
+
+http.createServer(app).listen(80);
+https.createServer(httpsOption, app).listen(443);
