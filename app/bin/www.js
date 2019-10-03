@@ -8,5 +8,5 @@ const httpsOption = {
     cert: fs.readFileSync("./https/meeting_zhangzhenkai.pem")
 }
 
-http.createServer(app).listen(80);
-https.createServer(httpsOption, app).listen(443);
+http.createServer(app).listen(3030);
+https.createServer(httpsOption, app).listen(3031);
